@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JARVIS Audio Visualizer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #030814;
+      color: #00f0ff;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hud-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .controls {
+      position: absolute;
+      bottom: 40px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: rgba(3, 12, 28, 0.7);
+      padding: 16px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+      backdrop-filter: blur(8px);
+    }
+    .status {
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px #00f0ff;
+    }
+    button {
+      background: rgba(0, 240, 255, 0.1);
+      color: #00f0ff;
+      border: 1px solid #00f0ff;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+    button:hover {
+      background: rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud-container">
+    <canvas id="jarvisCanvas"></canvas>
+    
+    <div class="controls">
+      <div id="statusText" class="status">SYSTEM IDLE // PRESS TO START</div>
+      <button id="micBtn">ACTIVATE MIC</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('jarvisCanvas');
+    const ctx = canvas.getContext('2d');
+    const micBtn = document.getElementById('micBtn');
+    const statusText = document.getElementById('statusText');
+
+    let audioCtx, analyser, dataArray, microphone;
+    let isListening = false;
+    let baseRadius = 110;
+    let rotationAngle = 0;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Particle pool for ambient floating particles
+    const particles = Array.from({ length: 60 }, () => ({
+      angle: Math.random() * Math.PI * 2,
+      dist: Math.random() * 180 + 120,
+      size: Math.random() * 2 + 1,
+      speed: (Math.random() - 0.5) * 0.015
+    }));
+    let mediarecorder;
+    let audioChunks=[]
+    async function initAudio() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediarecorder=new MediaRecorder(stream)
+        audioChunks=[]
+
+        mediarecorder.ondataavailable=(event)=>{
+          if(event.data.size>0) audioChunks.push(event.data)
+        }
+        mediarecorder.start();
+
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+        
+        microphone = audioCtx.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        isaid=dataArray;
+        console.log("aud",dataArray);
+        isListening = true;
+        statusText.innerText = "JARVIS ONLINE // LISTENING";
+        micBtn.innerText = "MUTE MIC";
+      } catch (err) {
+        statusText.innerText = "MIC ACCESS DENIED // SIMULATION MODE";
+      }
+    }
+
+    function getAudioVolume() {
+      if (!isListening || !dataArray) return 0;
+      analyser.getByteFrequencyData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        sum += dataArray[i];
+      }
+      return sum / dataArray.length; // Returns average volume level (0-255)
+    }
+
+    function drawJARVIS() {
+      requestAnimationFrame(drawJARVIS);
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const volume = getAudioVolume();
+      const intensity = volume / 255; // 0.0 to 1.0
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      rotationAngle += 0.008 + intensity * 0.03;
+      const dynamicRadius = baseRadius + intensity * 60;
+
+      // Outer Ambient Glow
+      const glowGrad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, dynamicRadius * 2);
+      glowGrad.addColorStop(0, 'rgba(0, 240, 255, 0.25)');
+      glowGrad.addColorStop(0.5, 'rgba(0, 150, 255, 0.08)');
+      glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = glowGrad;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, dynamicRadius * 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Outer Rotating Segmented Ring
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(rotationAngle);
+      ctx.strokeStyle = `rgba(0, 240, 255, ${0.4 + intensity * 0.6})`;
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 12; i++) {
+        ctx.beginPath();
+        ctx.arc(0, 0, dynamicRadius + 20, (i * Math.PI) / 6, (i * Math.PI) / 6 + 0.3);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Counter-rotating Inner Arc Ring
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(-rotationAngle * 1.5);
+      ctx.strokeStyle = 'rgba(0, 180, 255, 0.6)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, 0, dynamicRadius - 15, 0, Math.PI * 0.8);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, dynamicRadius - 15, Math.PI, Math.PI * 1.8);
+      ctx.stroke();
+      ctx.restore();
+
+      // Audio Wave Core Mesh
+      const numPoints = 64;
+      ctx.beginPath();
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 2 + intensity * 3;
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = '#00f0ff';
+
+      for (let i = 0; i <= numPoints; i++) {
+        const angle = (i / numPoints) * Math.PI * 2;
+        let waveOffset = 0;
+        
+        if (dataArray && isListening) {
+          const binIndex = Math.floor((i / numPoints) * dataArray.length);
+          waveOffset = (dataArray[binIndex] / 255) * 35;
+        } else {
+          waveOffset = Math.sin(angle * 8 + Date.now() * 0.005) * 4; // Gentle idle pulse
+        }
+
+        const r = dynamicRadius + waveOffset;
+        const x = centerX + Math.cos(angle) * r;
+        const y = centerY + Math.sin(angle) * r;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Core Arc Reactor Center
+      const coreGrad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, dynamicRadius * 0.5);
+      coreGrad.addColorStop(0, '#ffffff');
+      coreGrad.addColorStop(0.4, 'rgba(0, 240, 255, 0.8)');
+      coreGrad.addColorStop(1, 'rgba(0, 100, 255, 0)');
+      ctx.fillStyle = coreGrad;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, dynamicRadius * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Orbiting Floating Particles
+      particles.forEach(p => {
+        p.angle += p.speed + intensity * 0.02;
+        const px = centerX + Math.cos(p.angle) * (p.dist + intensity * 40);
+        const py = centerY + Math.sin(p.angle) * (p.dist + intensity * 40);
+
+        ctx.fillStyle = `rgba(0, 240, 255, ${0.3 + intensity * 0.7})`;
+        ctx.beginPath();
+        ctx.arc(px, py, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.shadowBlur = 0; // Reset canvas context state
+    }
+  
+    micBtn.addEventListener('click', async() => {
+      if (!isListening) {
+        initAudio();
+      } else {
+        mediarecorder.stop()
+        
+        mediarecorder.onstop=async()=>{
+          if (audioCtx) audioCtx.close();
+          const formdata=new FormData()
+          const audioBlob=new Blob(audioChunks,{type:'audio/webm'})
+          formdata.append("audio_file",audioBlob,"speech.webm")
+          //fetch
+          output=await fetch("http://localhost:8000/response",{
+            method:"POST",
+            body:formdata
+          })
+          const data=await output.json()
+          
+          .then(() => console.log("Audio playback started!"))
+          .catch(err => console.error("Playback failed (User must click page first):", err));
+          const playAudio = new Audio(`http://localhost:8000/static/speech.webm?t=${new Date().getTime()}`);
+          
+          playAudio.play()
+          .then(() => console.log("Audio playback started!"))
+          .catch(err => console.error("Playback failed:", err));
+          console.log("output",data);
+          
+          isListening = false;        
+          statusText.innerText = "SYSTEM IDLE // PRESS TO START";
+          micBtn.innerText = "ACTIVATE MIC";
+        }
+      }
+    });
+
+    drawJARVIS();
+  </script>
+</body>
+</html>
