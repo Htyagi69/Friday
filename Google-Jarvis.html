@@ -90,16 +90,20 @@
   </div>
 
   <script>
+    const ws = new WebSocket('ws://localhost:8000/ws/live');
     const canvas = document.getElementById('jarvisCanvas');
     const ctx = canvas.getContext('2d');
     const micBtn = document.getElementById('micBtn');
     const statusText = document.getElementById('statusText');
 
-    let audioCtx, analyser, dataArray, microphone;
+    let audioCtx, stream, analyser, dataArray, processor, micContext;
     let isListening = false;
     let baseRadius = 110;
     let rotationAngle = 0;
-
+    let activeSources = [];
+let aiVolume = 0;
+let smoothedAIVolume = 0;
+let micVolume = 0;
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -107,66 +111,181 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Particle pool for ambient floating particles
     const particles = Array.from({ length: 60 }, () => ({
       angle: Math.random() * Math.PI * 2,
       dist: Math.random() * 180 + 120,
       size: Math.random() * 2 + 1,
       speed: (Math.random() - 0.5) * 0.015
-    }));
-    let mediarecorder;
-    let audioChunks=[]
+    })); 
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+    let nextStartTime = 0;
+
+    function stopAllAudio() {
+      activeSources.forEach(s => {
+        try { s.stop(); } catch(e){}
+      });
+      activeSources = [];
+      if (audioCtx) {
+        nextStartTime = audioCtx.currentTime;
+      }
+    } 
+
+    ws.onmessage = async (event) => {
+      if (audioCtx.state === 'suspended') {
+        await audioCtx.resume();
+      }
+
+      const arrayBuffer = await event.data.arrayBuffer();
+      const int16Array = new Int16Array(arrayBuffer);
+      const float32Array = new Float32Array(int16Array.length);
+
+        let sumSquare = 0;
+
+     for (let i = 0; i < int16Array.length; i++) {
+        const sample = int16Array[i] / 32768;
+        float32Array[i] = sample;
+        sumSquare += sample * sample;}
+
+        const rms = Math.sqrt(
+          sumSquare / float32Array.length);
+
+       aiVolume = rms;
+      const audioBuffer = audioCtx.createBuffer(1, float32Array.length, 24000);
+      audioBuffer.getChannelData(0).set(float32Array);
+      
+      const source = audioCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioCtx.destination);
+
+      if (nextStartTime < audioCtx.currentTime) {
+        nextStartTime = audioCtx.currentTime;
+      }
+      source.start(nextStartTime);
+      nextStartTime += audioBuffer.duration;
+
+      activeSources.push(source);
+      source.onended = () => {
+        activeSources = activeSources.filter(s => s !== source);
+        if (activeSources.length === 0) {
+      aiVolume = 0;
+    }
+      };
+    };
+
     async function initAudio() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediarecorder=new MediaRecorder(stream)
-        audioChunks=[]
-
-        mediarecorder.ondataavailable=(event)=>{
-          if(event.data.size>0) audioChunks.push(event.data)
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
         }
-        mediarecorder.start();
 
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 128;
-        
-        microphone = audioCtx.createMediaStreamSource(stream);
-        microphone.connect(analyser);
-        
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          } 
+        });
+
+        micContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        console.log(" Mic sample rate:", micContext.sampleRate);
+        const source = micContext.createMediaStreamSource(stream);
+        processor = micContext.createScriptProcessor(2048, 1, 1);
+        analyser = micContext.createAnalyser();
+        analyser.fftSize = 64;
         dataArray = new Uint8Array(analyser.frequencyBinCount);
-        isaid=dataArray;
-        console.log("aud",dataArray);
+
+        source.connect(analyser);
+        source.connect(processor);
+
+        // FIX 1: Route processor through a muted GainNode to avoid audio loopback
+        const muteGain = micContext.createGain();
+        muteGain.gain.value = 0;
+        processor.connect(muteGain);
+        muteGain.connect(micContext.destination);
+
+        processor.onaudioprocess = (e) => {
+          if (ws.readyState === WebSocket.OPEN) {
+            const inputData = e.inputBuffer.getChannelData(0);
+            const pcm16 = new Int16Array(inputData.length);
+            
+            let sumSquare = 0;
+            for (let i = 0; i < inputData.length; i++) {
+              const sample = Math.max(-1, Math.min(1, inputData[i]));
+              pcm16[i] = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+              sumSquare += sample * sample;
+            }
+
+            const rms = Math.sqrt(sumSquare / inputData.length);
+            if (rms > 0.05 && activeSources.length > 0) {
+               console.log("🎤 USER SPEAKING:", rms);
+               stopAllAudio();
+            }
+
+            ws.send(pcm16.buffer.slice(0));
+          }
+        };      
+
         isListening = true;
         statusText.innerText = "JARVIS ONLINE // LISTENING";
         micBtn.innerText = "MUTE MIC";
+
       } catch (err) {
+        console.error(err);
         statusText.innerText = "MIC ACCESS DENIED // SIMULATION MODE";
       }
     }
 
-    function getAudioVolume() {
-      if (!isListening || !dataArray) return 0;
-      analyser.getByteFrequencyData(dataArray);
-      let sum = 0;
-      for (let i = 0; i < dataArray.length; i++) {
-        sum += dataArray[i];
-      }
-      return sum / dataArray.length; // Returns average volume level (0-255)
-    }
+function getAudioVolume() {
+  if (!isListening || !dataArray) return 0;
 
-    function drawJARVIS() {
-      requestAnimationFrame(drawJARVIS);
+  analyser.getByteTimeDomainData(dataArray);
 
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const volume = getAudioVolume();
-      const intensity = volume / 255; // 0.0 to 1.0
+  let sumSquare = 0;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < dataArray.length; i++) {
+    const sample = (dataArray[i] - 128) / 128;
+    sumSquare += sample * sample;
+  }
 
-      rotationAngle += 0.008 + intensity * 0.03;
-      const dynamicRadius = baseRadius + intensity * 60;
+  return Math.sqrt(sumSquare / dataArray.length);
+}
+
+function drawJARVIS() {
+          requestAnimationFrame(drawJARVIS);
+        
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+        
+          // MIC volume
+          const micVolume = isListening
+            ? getAudioVolume()
+            : 0;
+        
+          // AI volume
+          smoothedAIVolume +=
+            (aiVolume - smoothedAIVolume) * 0.15;
+        
+          // Whoever is speaking drives the animation
+          const volume = Math.max(
+            micVolume,
+            smoothedAIVolume
+          );
+
+  // Amplify small RMS values
+          const intensity = Math.min(
+            volume * 5,1);
+        
+          ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+
+         rotationAngle += 0.008 + intensity * 0.03;
+
+       const dynamicRadius =baseRadius + intensity * 60;
 
       // Outer Ambient Glow
       const glowGrad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, dynamicRadius * 2);
@@ -217,12 +336,14 @@
         const angle = (i / numPoints) * Math.PI * 2;
         let waveOffset = 0;
         
-        if (dataArray && isListening) {
-          const binIndex = Math.floor((i / numPoints) * dataArray.length);
-          waveOffset = (dataArray[binIndex] / 255) * 35;
-        } else {
-          waveOffset = Math.sin(angle * 8 + Date.now() * 0.005) * 4; // Gentle idle pulse
-        }
+      if (isListening) {
+
+       const mic = getAudioVolume();
+       const intensity = Math.max(mic,smoothedAIVolume);
+       waveOffset =intensity * 35;
+       waveOffset +=Math.sin(angle * 8 +Date.now() * 0.005) * intensity * 8;} 
+        else {
+        waveOffset =Math.sin(angle * 8 +Date.now() * 0.005) * 4;}
 
         const r = dynamicRadius + waveOffset;
         const x = centerX + Math.cos(angle) * r;
@@ -256,44 +377,27 @@
         ctx.fill();
       });
 
-      ctx.shadowBlur = 0; // Reset canvas context state
+      ctx.shadowBlur = 0;
     }
-  
-    micBtn.addEventListener('click', async() => {
+
+    micBtn.addEventListener('click', async () => {
       if (!isListening) {
         initAudio();
       } else {
-        mediarecorder.stop()
-        
-        mediarecorder.onstop=async()=>{
-          if (audioCtx) audioCtx.close();
-          const formdata=new FormData()
-          const audioBlob=new Blob(audioChunks,{type:'audio/webm'})
-          formdata.append("audio_file",audioBlob,"speech.webm")
-          //fetch
-          output=await fetch("http://localhost:8000/response",{
-            method:"POST",
-            body:formdata
-          })
-          const data=await output.json()
-          
-          .then(() => console.log("Audio playback started!"))
-          .catch(err => console.error("Playback failed (User must click page first):", err));
-          const playAudio = new Audio(`http://localhost:8000/static/speech.webm?t=${new Date().getTime()}`);
-          
-          playAudio.play()
-          .then(() => console.log("Audio playback started!"))
-          .catch(err => console.error("Playback failed:", err));
-          console.log("output",data);
-          
-          isListening = false;        
-          statusText.innerText = "SYSTEM IDLE // PRESS TO START";
-          micBtn.innerText = "ACTIVATE MIC";
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
         }
+        if (micContext) {
+          micContext.close();
+        }
+        stopAllAudio();
+        isListening = false;        
+        statusText.innerText = "SYSTEM IDLE // PRESS TO START";
+        micBtn.innerText = "ACTIVATE MIC";
       }
     });
 
     drawJARVIS();
-  </script>
+</script>
 </body>
 </html>
