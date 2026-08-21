@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/Google-Javris.html"
+      "destination": "/Google-Jarvis.html"
     }
   ]
 }
