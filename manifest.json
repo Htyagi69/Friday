@@ -1,0 +1,22 @@
+{
+  "name": "Friday AI Assistant",
+  "short_name": "Friday",
+  "description": "Your personal AI voice assistant",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020812",
+  "theme_color": "#020812",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/Friday.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/Friday.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
