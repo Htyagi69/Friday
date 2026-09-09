@@ -1061,7 +1061,7 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.141.1" },
     { name = "google-genai", specifier = ">=2.19.0" },
     { name = "mss", specifier = ">=10.2.0" },
-    { name = "prisma", specifier = ">=0.15.0" },
+    { name = "prisma", specifier = "==0.15.0" },
     { name = "tree-sitter-typescript", specifier = ">=0.23.2" },
 ]
 
