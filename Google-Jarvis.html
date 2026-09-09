@@ -15,7 +15,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-title" content="Friday">
-  <title>JARVIS Audio Visualizer</title>
+  <title>Friday </title>
   <style>
     * {
       box-sizing: border-box;
@@ -102,9 +102,14 @@
   </div>
 
   <script>
-    const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-production-a794.up.railway.app";
-    const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
-    const ws = new WebSocket(`${wsUrl}/ws/live`);
+  let ws = null;
+  async function startFriday(){
+
+    // const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-production-a794.up.railway.app";
+    // const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
+    // const ws = new WebSocket(`${wsUrl}/ws/live/${sessionId}`);
+     ws = new WebSocket(`ws://localhost:8000/ws/live`);
+
     const canvas = document.getElementById('jarvisCanvas');
     const ctx = canvas.getContext('2d');
     const micBtn = document.getElementById('micBtn');
@@ -412,6 +417,8 @@ function drawJARVIS() {
     });
 
     drawJARVIS();
+  }
+  startFriday()
     if("serviceWorker" in navigator){
       window.addEventListener("load",()=>{
         navigator.serviceWorker.register("service-worker.js")
