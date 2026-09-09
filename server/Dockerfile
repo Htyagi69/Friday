@@ -3,7 +3,7 @@ FROM python:3.13-slim-bookworm
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y openssl libssl3 && \
+    apt-get install -y openssl libssl3 libatomic1 && \
     rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml uv.lock ./
