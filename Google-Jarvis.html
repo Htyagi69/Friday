@@ -103,7 +103,7 @@
 
   <script>
   let ws = null;
-
+  let transcriptStep=0;
   function handleTranscript(text){
     if(!text||!text.trim()) return;
     if(transcriptStep===0){
