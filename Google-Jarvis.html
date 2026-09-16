@@ -103,6 +103,18 @@
 
   <script>
   let ws = null;
+
+  function handleTranscript(text){
+    if(!text||!text.trim()) return;
+    if(transcriptStep===0){
+        if(userTranscript) userTranscript.textContent=text;
+        transcriptStep=1;
+    }else{
+        if(jarvisTranscript) jarvisTranscript.textContent=text;
+        transcriptStep=0;
+    }
+}
+
   async function startFriday(){
 
     // const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-production-a794.up.railway.app";
@@ -151,6 +163,12 @@ let micVolume = 0;
     } 
 
     ws.onmessage = async (event) => {
+       if(typeof event.data==="string"){
+            console.log("📝 Text received:",event.data);
+            handleTranscript(event.data);
+            return;
+        }
+
       if (audioCtx.state === 'suspended') {
         await audioCtx.resume();
       }
