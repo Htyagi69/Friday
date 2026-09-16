@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#020812">
 <link rel="icon" href="assets/Friday.png">
@@ -11,618 +11,1404 @@
 <meta name="mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-title" content="Friday">
 <title>FRIDAY</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--cyan:#00cfff;--cyan2:#009dff;--blue:#0878ff;--bg:#020812;--panel:rgba(3,17,31,.76);--line:rgba(0,170,255,.30);--muted:#63839d;--text:#e8f5ff}
-html,body{width:100%;height:100%;overflow:hidden}
-body{background:radial-gradient(circle at 50% 43%,rgba(0,94,190,.18),transparent 28%),radial-gradient(circle at 50% 45%,rgba(0,174,255,.08),transparent 43%),#020812;color:var(--text);font-family:"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
-.hud{position:relative;width:100vw;height:100vh;min-width:0;overflow:hidden;isolation:isolate}
-.hud:before{content:"";position:absolute;inset:0;z-index:-3;opacity:.42;background-image:linear-gradient(rgba(0,133,211,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(0,133,211,.08) 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(to bottom,transparent 0%,black 18%,black 82%,transparent 100%)}
-.hud:after{content:"";position:absolute;width:700px;height:700px;left:50%;top:47%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(0,108,255,.18),rgba(0,71,180,.07) 35%,transparent 68%);filter:blur(12px);z-index:-2;pointer-events:none}
-.topbar{position:absolute;top:0;left:0;right:0;height:126px;z-index:20}
-.clock-wrap{position:absolute;left:24px;top:21px;display:flex;align-items:center;gap:17px}
-.clock-ring{width:62px;height:62px;border:2px solid #00cfff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#dff9ff;font-size:12px;box-shadow:0 0 10px rgba(0,207,255,.8),inset 0 0 14px rgba(0,139,255,.18)}
-.clock-info .time{color:#eef8ff;font-size:20px;line-height:1.05;letter-spacing:.2px}
-.clock-info .date{margin-top:5px;color:#5f8aa7;font-size:12px;line-height:1.35}
-.brand{position:absolute;top:21px;left:50%;transform:translateX(-50%);text-align:center}
-.brand h1{font-size:39px;line-height:1;font-weight:300;letter-spacing:12px;color:#e8f8ff;text-shadow:0 0 22px rgba(0,182,255,.30);padding-left:12px}
-.brand p{margin-top:11px;font-size:13px;color:#6595b7;letter-spacing:.1px}
-.window-controls{position:absolute;top:45px;right:25px;display:flex;gap:21px;color:#89b1c9;font-size:18px;align-items:center}
-.window-controls span{cursor:pointer;transition:.2s}
+
+:root{
+  --cyan:#00cfff;
+  --cyan2:#009dff;
+  --blue:#0878ff;
+  --bg:#020812;
+  --panel:rgba(3,17,31,.76);
+  --line:rgba(0,170,255,.30);
+  --muted:#63839d;
+  --text:#e8f5ff;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  background:
+    radial-gradient(circle at 50% 43%,rgba(0,94,190,.18),transparent 28%),
+    radial-gradient(circle at 50% 45%,rgba(0,174,255,.08),transparent 43%),
+    #020812;
+  color:var(--text);
+  font-family:"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+/* ---------- BACKGROUND ---------- */
+.hud{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  min-width:900px;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+.hud:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-3;
+  opacity:.42;
+  background-image:
+    linear-gradient(rgba(0,133,211,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,133,211,.08) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:linear-gradient(to bottom,transparent 0%,black 18%,black 82%,transparent 100%);
+}
+
+.hud:after{
+  content:"";
+  position:absolute;
+  width:700px;
+  height:700px;
+  left:50%;
+  top:47%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,108,255,.18),rgba(0,71,180,.07) 35%,transparent 68%);
+  filter:blur(12px);
+  z-index:-2;
+  pointer-events:none;
+}
+
+/* ---------- HEADER ---------- */
+.topbar{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:126px;
+  z-index:20;
+}
+
+.clock-wrap{
+  position:absolute;
+  left:24px;
+  top:21px;
+  display:flex;
+  align-items:center;
+  gap:17px;
+}
+
+.clock-ring{
+  width:62px;
+  height:62px;
+  border:2px solid #00cfff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#dff9ff;
+  font-size:12px;
+  box-shadow:
+    0 0 10px rgba(0,207,255,.8),
+    inset 0 0 14px rgba(0,139,255,.18);
+}
+
+.clock-info .time{
+  color:#eef8ff;
+  font-size:20px;
+  line-height:1.05;
+  letter-spacing:.2px;
+}
+
+.clock-info .date{
+  margin-top:5px;
+  color:#5f8aa7;
+  font-size:12px;
+  line-height:1.35;
+}
+
+.brand{
+  position:absolute;
+  top:21px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+}
+
+.brand h1{
+  font-size:39px;
+  line-height:1;
+  font-weight:300;
+  letter-spacing:12px;
+  color:#e8f8ff;
+  text-shadow:0 0 22px rgba(0,182,255,.30);
+  padding-left:12px;
+}
+
+.brand p{
+  margin-top:11px;
+  font-size:13px;
+  color:#6595b7;
+  letter-spacing:.1px;
+}
+
+.window-controls{
+  position:absolute;
+  top:45px;
+  right:25px;
+  display:flex;
+  gap:21px;
+  color:#89b1c9;
+  font-size:18px;
+  align-items:center;
+}
+
+.window-controls span{
+  cursor:pointer;
+  transition:.2s;
+}
+
 .window-controls span:hover{color:#fff}
-.header-wave{position:absolute;top:66px;right:31px;width:315px;height:24px;display:flex;align-items:center;justify-content:space-between;gap:2px;overflow:hidden;pointer-events:none}
-.header-wave i{display:block;width:3px;min-width:3px;border-radius:5px;height:9px;background:#00cfff;box-shadow:0 0 8px rgba(0,207,255,.85);animation:wave 1.15s ease-in-out infinite}
+
+.header-wave{
+  position:absolute;
+  top:66px;
+  right:31px;
+  width:315px;
+  height:24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:2px;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.header-wave i{
+  display:block;
+  width:3px;
+  min-width:3px;
+  border-radius:5px;
+  height:9px;
+  background:#00cfff;
+  box-shadow:0 0 8px rgba(0,207,255,.85);
+  animation:wave 1.15s ease-in-out infinite;
+}
+
 .header-wave i:nth-child(3n){animation-delay:-.2s}
 .header-wave i:nth-child(4n){animation-delay:-.5s}
 .header-wave i:nth-child(5n){animation-delay:-.8s}
-.header-ready{position:absolute;top:103px;right:91px;color:#00d8ff;font-size:12px}
-@keyframes wave{0%,100%{height:7px;opacity:.65}50%{height:19px;opacity:1}}
-.left-panel,.right-column{position:absolute;top:149px;bottom:0;z-index:12}
-.left-panel{left:28px;width:340px;border:1px solid rgba(0,151,232,.33);border-radius:19px 19px 0 0;background:linear-gradient(180deg,rgba(4,23,40,.86),rgba(2,13,25,.70));box-shadow:inset 0 0 35px rgba(0,112,198,.035);overflow:hidden}
-.left-panel:after{content:"";position:absolute;top:10px;right:0;width:1px;height:70px;background:linear-gradient(transparent,#00cfff,transparent)}
-.nav{padding:10px 9px}
-.nav-item{height:75px;margin:0;padding:0 25px;border-radius:16px;display:flex;align-items:center;gap:25px;color:#e8f2f8;cursor:pointer;border:1px solid transparent;transition:.25s}
-.nav-item+.nav-item{margin-top:1px}
-.nav-item.active{height:75px;border-color:#00bfff;background:linear-gradient(90deg,rgba(0,154,234,.18),rgba(0,65,105,.08));box-shadow:inset 3px 0 0 #00cfff,0 0 15px rgba(0,168,255,.06)}
-.nav-icon{width:29px;text-align:center;font-size:22px;color:#00cfff;text-shadow:0 0 11px rgba(0,207,255,.75);flex:0 0 29px}
-.nav-item.active .nav-icon{font-size:17px}
-.nav-copy strong{display:block;font-size:16px;font-weight:500;color:#f1f7fb}
-.nav-copy small{display:block;margin-top:5px;color:#64859c;font-size:12px}
-.right-column{right:28px;width:340px}
-.panel{width:100%;border:1px solid rgba(0,151,232,.31);border-radius:19px;background:linear-gradient(180deg,rgba(3,20,34,.84),rgba(2,13,25,.66));box-shadow:inset 0 0 28px rgba(0,112,198,.035);padding:17px 18px}
-.panel+.panel{margin-top:20px}
-.panel-title{display:flex;align-items:center;gap:10px;font-size:15px;color:#edf5fa;font-weight:500}
-.dot{width:10px;height:10px;border-radius:50%;background:#00efb0;box-shadow:0 0 10px #00efb0}
-.dot.pink{background:#ff66cf;box-shadow:0 0 10px #ff66cf}
-.transcript{height:129px}
-.transcript-box{margin-top:18px;height:110px;border:1px solid rgba(0,143,224,.25);border-radius:12px;padding:20px 14px;background:rgba(0,8,18,.22);overflow:hidden}
-.line{font-size:12px;color:#00cfff;line-height:1.7;overflow:hidden;text-overflow:ellipsis}
-.line+.line{margin-top:17px}
+
+.header-ready{
+  position:absolute;
+  top:103px;
+  right:91px;
+  color:#00d8ff;
+  font-size:12px;
+}
+
+@keyframes wave{
+  0%,100%{height:7px;opacity:.65}
+  50%{height:19px;opacity:1}
+}
+
+/* ---------- SIDE PANELS ---------- */
+.left-panel,
+.right-column{
+  position:absolute;
+  top:149px;
+  bottom:0;
+  z-index:12;
+}
+
+.left-panel{
+  left:28px;
+  width:340px;
+  border:1px solid rgba(0,151,232,.33);
+  border-radius:19px 19px 0 0;
+  background:linear-gradient(180deg,rgba(4,23,40,.86),rgba(2,13,25,.70));
+  box-shadow:inset 0 0 35px rgba(0,112,198,.035);
+  overflow:hidden;
+}
+
+.left-panel:after{
+  content:"";
+  position:absolute;
+  top:10px;
+  right:0;
+  width:1px;
+  height:70px;
+  background:linear-gradient(transparent,#00cfff,transparent);
+}
+
+.nav{
+  padding:10px 9px;
+}
+
+.nav-item{
+  height:75px;
+  margin:0;
+  padding:0 25px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  gap:25px;
+  color:#e8f2f8;
+  cursor:pointer;
+  border:1px solid transparent;
+  transition:.25s;
+}
+
+.nav-item + .nav-item{margin-top:1px}
+
+.nav-item.active{
+  height:75px;
+  border-color:#00bfff;
+  background:linear-gradient(90deg,rgba(0,154,234,.18),rgba(0,65,105,.08));
+  box-shadow:
+    inset 3px 0 0 #00cfff,
+    0 0 15px rgba(0,168,255,.06);
+}
+
+.nav-icon{
+  width:29px;
+  text-align:center;
+  font-size:22px;
+  color:#00cfff;
+  text-shadow:0 0 11px rgba(0,207,255,.75);
+  flex:0 0 29px;
+}
+
+.nav-item.active .nav-icon{
+  font-size:17px;
+}
+
+.nav-copy strong{
+  display:block;
+  font-size:16px;
+  font-weight:500;
+  color:#f1f7fb;
+}
+
+.nav-copy small{
+  display:block;
+  margin-top:5px;
+  color:#64859c;
+  font-size:12px;
+}
+
+.right-column{
+  right:28px;
+  width:340px;
+}
+
+.panel{
+  width:100%;
+  border:1px solid rgba(0,151,232,.31);
+  border-radius:19px;
+  background:linear-gradient(180deg,rgba(3,20,34,.84),rgba(2,13,25,.66));
+  box-shadow:inset 0 0 28px rgba(0,112,198,.035);
+  padding:17px 18px;
+}
+
+.panel + .panel{margin-top:20px}
+
+.panel-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:15px;
+  color:#edf5fa;
+  font-weight:500;
+}
+
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#00efb0;
+  box-shadow:0 0 10px #00efb0;
+}
+
+.dot.pink{
+  background:#ff66cf;
+  box-shadow:0 0 10px #ff66cf;
+}
+
+.transcript{
+  height:129px;
+}
+
+.transcript-box{
+  margin-top:18px;
+  height:110px;
+  border:1px solid rgba(0,143,224,.25);
+  border-radius:12px;
+  padding:20px 14px;
+  background:rgba(0,8,18,.22);
+}
+
+.line{
+  font-size:12px;
+  color:#00cfff;
+  line-height:1.7;
+}
+
+.line + .line{margin-top:17px}
 .line span{color:#00d9ff}
 .line.jarvis{color:#00a9ff}
-.thinking{height:173px}
-.thinking-box{margin-top:18px;height:100px;border:1px solid rgba(0,143,224,.23);border-radius:12px;overflow:hidden;display:flex;align-items:center;padding:0 26px;background:rgba(0,8,18,.22)}
-.thinking-wave{width:100%;height:65px}
-.thinking-wave path{fill:none;stroke:#00a9ff;stroke-width:1.5;filter:drop-shadow(0 0 5px rgba(0,174,255,.65))}
-.status-panel{min-height:175px}
-.status-row{margin-top:17px;display:grid;grid-template-columns:1fr auto;row-gap:18px;color:#7291a7;font-size:13px;padding:0 3px}
+
+.thinking{
+  height:173px;
+}
+
+.thinking-box{
+  margin-top:18px;
+  height:100px;
+  border:1px solid rgba(0,143,224,.23);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  padding:0 26px;
+  background:rgba(0,8,18,.22);
+}
+
+.thinking-wave{
+  width:100%;
+  height:65px;
+}
+
+.thinking-wave path{
+  fill:none;
+  stroke:#00a9ff;
+  stroke-width:1.5;
+  filter:drop-shadow(0 0 5px rgba(0,174,255,.65));
+}
+
+.status-panel{
+  min-height:175px;
+}
+
+.status-row{
+  margin-top:17px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  row-gap:18px;
+  color:#7291a7;
+  font-size:13px;
+  padding:0 3px;
+}
+
 .status-value{color:#00e5b3}
 .status-value.cyan{color:#00cfff}
-.center-stage{position:absolute;z-index:5;left:368px;right:368px;top:126px;bottom:0;pointer-events:none}
-#jarvisCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.voice-area{position:absolute;left:50%;top:329px;transform:translateX(-50%);width:470px;pointer-events:auto}
-.voice-pill{width:470px;height:100px;border-radius:55px;border:1px solid #00bff5;background:radial-gradient(ellipse at 50% 8%,rgba(0,116,255,.43),transparent 50%),linear-gradient(180deg,rgba(2,51,91,.85),rgba(1,27,55,.91));box-shadow:0 0 25px rgba(0,136,255,.16),inset 0 0 20px rgba(0,155,255,.12);display:flex;align-items:center;justify-content:center;gap:21px}
-.voice-copy{width:190px;text-align:center}
-.voice-title{color:#f3f9ff;font-size:25px;font-weight:400}
-.voice-subtitle{color:#7192aa;margin-top:5px;font-size:13px}
-.mic-button{width:82px;height:82px;border-radius:50%;border:2px solid #00cfff;background:radial-gradient(circle at 50% 42%,rgba(0,162,255,.30),rgba(0,37,80,.72) 62%,rgba(0,19,39,.9));box-shadow:0 0 16px rgba(0,198,255,.42),inset 0 0 16px rgba(0,162,255,.18);color:#00cfff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:25px;transition:.25s;touch-action:manipulation}
-.mic-button:hover,.mic-button.active{transform:scale(1.045);box-shadow:0 0 28px rgba(0,198,255,.65),inset 0 0 20px rgba(0,162,255,.25)}
-.mic-glyph{font-size:25px;line-height:1;filter:drop-shadow(0 0 5px #00cfff)}
-.voice-help{text-align:center;margin-top:16px;color:#527b94;font-size:12px}
-.voice-help kbd{color:#9ab5c7;border:1px solid rgba(105,155,183,.35);background:rgba(12,31,47,.65);border-radius:5px;padding:2px 7px;margin:0 3px}
-.core-ring{position:absolute;left:50%;top:38px;transform:translateX(-50%);width:300px;height:300px;border-radius:50%;border:1px solid rgba(0,195,255,.28);box-shadow:0 0 35px rgba(0,122,255,.16),inset 0 0 25px rgba(0,143,255,.08);pointer-events:none}
-.core-ring:before{content:"";position:absolute;inset:9px;border-radius:50%;border:1px dashed rgba(0,191,255,.24)}
-.core-ring:after{content:"";position:absolute;inset:25px;border-radius:50%;border:1px solid rgba(0,145,255,.12)}
-.quote{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);color:#45677d;font-size:11px;letter-spacing:.5px;text-align:center;white-space:nowrap;pointer-events:none}
-@media(max-width:1100px) and (min-width:701px){.left-panel{width:250px;left:15px}.right-column{width:250px;right:15px}.center-stage{left:275px;right:275px}.voice-area,.voice-pill{width:390px}.brand h1{font-size:34px}}
-@media(max-width:700px){html,body{width:100%;height:100%;overflow:hidden}.hud{width:100vw;height:100dvh;min-width:0}.topbar{height:92px}.brand{top:18px}.brand h1{font-size:25px;letter-spacing:7px;padding-left:7px}.brand p{margin-top:7px;font-size:9px;white-space:nowrap}.clock-wrap{left:13px;top:17px;gap:8px}.clock-ring{width:43px;height:43px;font-size:9px}.clock-info{display:none}.window-controls,.header-wave{display:none}.header-ready{top:69px;right:50%;transform:translateX(50%);font-size:10px}.left-panel,.right-column{display:none}.center-stage{left:0;right:0;top:92px;bottom:0;width:100%}.core-ring{top:4vh;width:min(67vw,270px);height:min(67vw,270px)}.voice-area{left:50%;top:auto;bottom:13vh;width:calc(100% - 28px);max-width:440px}.voice-pill{width:100%;height:88px;border-radius:50px;gap:12px;padding:5px 9px}.voice-copy{width:auto;flex:1;min-width:0}.voice-title{font-size:21px}.voice-subtitle{margin-top:4px;font-size:11px;white-space:nowrap}.mic-button{width:70px;height:70px;flex:0 0 70px;font-size:22px}.mic-glyph{font-size:22px}.voice-help{margin-top:11px;font-size:10px}.quote{bottom:20px;width:100%;font-size:8px;letter-spacing:.35px;white-space:normal}}
-@media(max-width:380px){.brand{top:17px}.brand h1{font-size:22px;letter-spacing:5px;padding-left:5px}.brand p{font-size:8px}.core-ring{top:3vh;width:61vw;height:61vw}.voice-area{bottom:12vh;width:calc(100% - 20px)}.voice-pill{height:82px;padding:5px 7px;gap:8px}.voice-title{font-size:18px}.voice-subtitle{font-size:10px}.mic-button{width:64px;height:64px;flex-basis:64px}.voice-help{display:none}}
-@media(max-width:700px) and (max-height:650px){.topbar{height:75px}.center-stage{top:75px}.core-ring{top:0}.voice-area{bottom:8vh}.quote{display:none}}
-@media(max-width:700px) and (orientation:landscape){.topbar{height:70px}.center-stage{top:70px}.brand{top:10px}.brand h1{font-size:21px}.brand p{display:none}.header-ready{top:48px}.core-ring{top:0;width:180px;height:180px}.voice-area{bottom:7vh;max-width:390px}.voice-pill{height:70px}.mic-button{width:58px;height:58px;flex-basis:58px}.voice-title{font-size:18px}.voice-subtitle{font-size:9px}.voice-help,.quote{display:none}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+
+/* ---------- CENTER ---------- */
+.center-stage{
+  position:absolute;
+  z-index:5;
+  left:368px;
+  right:368px;
+  top:126px;
+  bottom:0;
+  pointer-events:none;
+}
+
+#jarvisCanvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+/* This is the visible central voice control. */
+.voice-area{
+  position:absolute;
+  left:50%;
+  top:329px;
+  transform:translateX(-50%);
+  width:470px;
+  pointer-events:auto;
+}
+
+.voice-pill{
+  width:470px;
+  height:100px;
+  border-radius:55px;
+  border:1px solid #00bff5;
+  background:
+    radial-gradient(ellipse at 50% 8%,rgba(0,116,255,.43),transparent 50%),
+    linear-gradient(180deg,rgba(2,51,91,.85),rgba(1,27,55,.91));
+  box-shadow:
+    0 0 25px rgba(0,136,255,.16),
+    inset 0 0 20px rgba(0,155,255,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:21px;
+}
+
+.voice-copy{
+  width:190px;
+  text-align:center;
+}
+
+.voice-title{
+  color:#f3f9ff;
+  font-size:25px;
+  font-weight:400;
+}
+
+.voice-subtitle{
+  color:#7192aa;
+  margin-top:5px;
+  font-size:13px;
+}
+
+.mic-button{
+  width:82px;
+  height:82px;
+  border-radius:50%;
+  border:2px solid #00cfff;
+  background:radial-gradient(circle at 50% 42%,rgba(0,162,255,.30),rgba(0,37,80,.72) 62%,rgba(0,19,39,.9));
+  box-shadow:
+    0 0 16px rgba(0,198,255,.42),
+    inset 0 0 16px rgba(0,162,255,.18);
+  color:#00cfff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  transition:.25s;
+}
+
+.mic-button:hover,
+.mic-button.active{
+  transform:scale(1.045);
+  box-shadow:
+    0 0 28px rgba(0,198,255,.65),
+    inset 0 0 20px rgba(0,162,255,.25);
+}
+
+.mic-glyph{
+  font-size:25px;
+  line-height:1;
+  filter:drop-shadow(0 0 5px #00cfff);
+}
+
+.voice-help{
+  text-align:center;
+  margin-top:16px;
+  color:#527b94;
+  font-size:12px;
+}
+
+.voice-help kbd{
+  color:#9ab5c7;
+  border:1px solid rgba(105,155,183,.35);
+  background:rgba(12,31,47,.65);
+  border-radius:5px;
+  padding:2px 7px;
+  margin:0 3px;
+}
+
+/* ---------- CORE OVERLAY ---------- */
+/* Canvas supplies the animated core from the original frontend logic. */
+.core-ring{
+  position:absolute;
+  left:50%;
+  top:38px;
+  transform:translateX(-50%);
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  border:1px solid rgba(0,195,255,.28);
+  box-shadow:
+    0 0 35px rgba(0,122,255,.16),
+    inset 0 0 25px rgba(0,143,255,.08);
+  pointer-events:none;
+}
+
+.core-ring:before{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border-radius:50%;
+  border:1px dashed rgba(0,191,255,.24);
+}
+
+.core-ring:after{
+  content:"";
+  position:absolute;
+  inset:25px;
+  border-radius:50%;
+  border:1px solid rgba(0,145,255,.12);
+}
+
+/* ---------- FOOTER / QUOTE ---------- */
+.quote{
+  position:absolute;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%);
+  color:#45677d;
+  font-size:11px;
+  letter-spacing:.5px;
+  text-align:center;
+  white-space:nowrap;
+  pointer-events:none;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:1100px){
+  .left-panel{width:290px}
+  .right-column{width:290px}
+  .center-stage{left:310px;right:310px}
+  .voice-pill{width:420px}
+  .voice-area{width:420px}
+}
+
+@media(max-height:700px){
+  .left-panel,.right-column{top:140px}
+  .nav-item{height:65px}
+  .nav-item.active{height:65px}
+  .voice-area{top:320px}
+}
 </style>
 </head>
+
 <body>
 <div class="hud">
-<header class="topbar">
-<div class="clock-wrap">
-<div class="clock-ring" id="clockSeconds">28</div>
-<div class="clock-info">
-<div class="time" id="clockTime">10:42 AM</div>
-<div class="date" id="clockDate">Wednesday, September 16,<br>2026</div>
-</div>
-</div>
-<div class="brand"><h1>JARVIS</h1><p>Your Personal AI Assistant</p></div>
-<div class="window-controls"><span>—</span><span>↗</span><span>×</span></div>
-<div class="header-wave" id="headerWave"></div>
-<div class="header-ready" id="headerReady">Ready</div>
-</header>
 
-<aside class="left-panel">
-<nav class="nav">
-<div class="nav-item active"><div class="nav-icon">◌</div><div class="nav-copy"><strong>Chat</strong><small>Talk with JARVIS</small></div></div>
-<div class="nav-item"><div class="nav-icon">⌕</div><div class="nav-copy"><strong>Search</strong><small>Find anything</small></div></div>
-<div class="nav-item"><div class="nav-icon">▣</div><div class="nav-copy"><strong>System</strong><small>Control your PC</small></div></div>
-<div class="nav-item"><div class="nav-icon">▤</div><div class="nav-copy"><strong>Notes</strong><small>Take quick notes</small></div></div>
-<div class="nav-item"><div class="nav-icon">♧</div><div class="nav-copy"><strong>Reminders</strong><small>Set a reminder</small></div></div>
-<div class="nav-item"><div class="nav-icon">⚙</div><div class="nav-copy"><strong>Settings</strong><small>Customize JARVIS</small></div></div>
-</nav>
-</aside>
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="clock-wrap">
+      <div class="clock-ring" id="clockSeconds">28</div>
+      <div class="clock-info">
+        <div class="time" id="clockTime">10:42 AM</div>
+        <div class="date" id="clockDate">Wednesday, September 16,<br>2026</div>
+      </div>
+    </div>
 
-<aside class="right-column">
-<section class="panel transcript">
-<div class="panel-title"><span class="dot"></span><span>Live Transcript</span></div>
-<div class="transcript-box">
-<div class="line"><span>You:</span> <span id="userTranscript">Say something...</span></div>
-<div class="line jarvis"><span>Jarvis:</span> <span id="jarvisTranscript">I'm listening.</span></div>
-</div>
-</section>
-<section class="panel thinking">
-<div class="panel-title"><span class="dot pink"></span><span>Thinking...</span></div>
-<div class="thinking-box">
-<svg class="thinking-wave" viewBox="0 0 300 70" preserveAspectRatio="none"><path id="thinkingPath" d="M0 35 C20 15 30 15 50 35 S80 55 100 35 S130 15 150 35 S180 55 200 35 S230 15 250 35 S280 55 300 35"></path></svg>
-</div>
-</section>
-<section class="panel status-panel">
-<div class="panel-title"><span class="dot"></span><span>Status</span></div>
-<div class="status-row">
-<span>Microphone</span><span class="status-value" id="micStatus">Ready</span>
-<span>Connection</span><span class="status-value cyan" id="connectionStatus">Offline</span>
-<span>Assistant</span><span class="status-value cyan" id="assistantStatus">Ready</span>
-</div>
-</section>
-</aside>
+    <div class="brand">
+      <h1>JARVIS</h1>
+      <p>Your Personal AI Assistant</p>
+    </div>
 
-<main class="center-stage">
-<canvas id="jarvisCanvas"></canvas>
-<div class="core-ring"></div>
-<div class="voice-area">
-<div class="voice-pill">
-<div class="voice-copy">
-<div class="voice-title" id="voiceTitle">Yes, Sir?</div>
-<div class="voice-subtitle" id="voiceSubtitle">I'm listening...</div>
-</div>
-<button class="mic-button" id="micBtn" aria-label="Activate microphone"><span class="mic-glyph">♟</span></button>
-</div>
-<div class="voice-help">Press <kbd>Space</kbd> to talk</div>
-</div>
-<div class="quote">JARVIS // ADVANCED PERSONAL ASSISTANT</div>
-</main>
+    <div class="window-controls">
+      <span>—</span>
+      <span>↗</span>
+      <span>×</span>
+    </div>
+
+    <div class="header-wave" id="headerWave"></div>
+    <div class="header-ready" id="headerReady">Ready</div>
+  </header>
+
+  <!-- LEFT NAVIGATION -->
+  <aside class="left-panel">
+    <nav class="nav">
+      <div class="nav-item active">
+        <div class="nav-icon">◌</div>
+        <div class="nav-copy">
+          <strong>Chat</strong>
+          <small>Talk with JARVIS</small>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">⌕</div>
+        <div class="nav-copy">
+          <strong>Search</strong>
+          <small>Find anything</small>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">▣</div>
+        <div class="nav-copy">
+          <strong>System</strong>
+          <small>Control your PC</small>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">▤</div>
+        <div class="nav-copy">
+          <strong>Notes</strong>
+          <small>Take quick notes</small>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">♧</div>
+        <div class="nav-copy">
+          <strong>Reminders</strong>
+          <small>Set a reminder</small>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <div class="nav-icon">⚙</div>
+        <div class="nav-copy">
+          <strong>Settings</strong>
+          <small>Customize JARVIS</small>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- RIGHT INFORMATION PANELS -->
+  <aside class="right-column">
+
+    <section class="panel transcript">
+      <div class="panel-title">
+        <span class="dot"></span>
+        <span>Live Transcript</span>
+      </div>
+
+      <div class="transcript-box">
+        <div class="line"><span>You:</span> <span id="userTranscript">Say something...</span></div>
+        <div class="line jarvis"><span>Jarvis:</span> <span id="jarvisTranscript">I'm listening.</span></div>
+      </div>
+    </section>
+
+    <section class="panel thinking">
+      <div class="panel-title">
+        <span class="dot pink"></span>
+        <span>Thinking...</span>
+      </div>
+
+      <div class="thinking-box">
+        <svg class="thinking-wave" viewBox="0 0 300 70" preserveAspectRatio="none">
+          <path id="thinkingPath"
+            d="M0 35 C20 15 30 15 50 35 S80 55 100 35 S130 15 150 35 S180 55 200 35 S230 15 250 35 S280 55 300 35"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="panel status-panel">
+      <div class="panel-title">
+        <span class="dot"></span>
+        <span>Status</span>
+      </div>
+
+      <div class="status-row">
+        <span>Microphone</span><span class="status-value" id="micStatus">Ready</span>
+        <span>Connection</span><span class="status-value cyan" id="connectionStatus">Offline</span>
+        <span>Assistant</span><span class="status-value cyan" id="assistantStatus">Ready</span>
+      </div>
+    </section>
+
+  </aside>
+
+  <!-- CENTER -->
+  <main class="center-stage">
+
+    <canvas id="jarvisCanvas"></canvas>
+
+    <div class="core-ring"></div>
+
+    <div class="voice-area">
+      <div class="voice-pill">
+        <div class="voice-copy">
+          <div class="voice-title" id="voiceTitle">Yes, Sir?</div>
+          <div class="voice-subtitle" id="voiceSubtitle">I'm listening...</div>
+        </div>
+
+        <button class="mic-button" id="micBtn" aria-label="Activate microphone">
+          <span class="mic-glyph">♟</span>
+        </button>
+      </div>
+
+      <div class="voice-help">Press <kbd>Space</kbd> to talk</div>
+    </div>
+
+    <div class="quote">JARVIS // ADVANCED PERSONAL ASSISTANT</div>
+  </main>
 </div>
 
 <script>
-let ws=null;
+/* =========================================================
+   BACKEND / AUDIO LOGIC
+   The WebSocket endpoint remains unchanged.
+   UI above is independent and can later be connected to
+   transcript/session/backend events.
+   ========================================================= */
 
-const API_URL=window.location.hostname==="127.0.0.1"?"http://127.0.0.1:8000":"https://friday-production-a794.up.railway.app";
-const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:");
+let ws = null;
 
 async function startFriday(){
-const canvas=document.getElementById("jarvisCanvas");
-const ctx=canvas.getContext("2d");
-const micBtn=document.getElementById("micBtn");
-const statusText=document.getElementById("assistantStatus");
-const connectionStatus=document.getElementById("connectionStatus");
-const micStatus=document.getElementById("micStatus");
-const voiceTitle=document.getElementById("voiceTitle");
-const voiceSubtitle=document.getElementById("voiceSubtitle");
-const headerReady=document.getElementById("headerReady");
 
-let audioCtx;
-let stream;
-let analyser;
-let dataArray;
-let processor;
-let micContext;
-let isListening=false;
-let baseRadius=118;
-let rotationAngle=0;
-let activeSources=[];
-let aiVolume=0;
-let smoothedAIVolume=0;
-let micVolume=0;
-let nextStartTime=0;
-let transcriptStep=0;
+  // KEEP YOUR EXISTING BACKEND ENDPOINT
+   const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-production-a794.up.railway.app";
+    const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
+     ws = new WebSocket(`${wsUrl}/ws/live`);
+  // ws = new WebSocket(`ws://localhost:8000/ws/live`);
 
-function resizeCanvas(){
-const dpr=Math.min(window.devicePixelRatio||1,2);
-canvas.width=canvas.clientWidth*dpr;
-canvas.height=canvas.clientHeight*dpr;
-ctx.setTransform(dpr,0,0,dpr,0,0);
+  const canvas = document.getElementById('jarvisCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const micBtn = document.getElementById('micBtn');
+  const statusText = document.getElementById('assistantStatus');
+
+  const connectionStatus = document.getElementById('connectionStatus');
+  const micStatus = document.getElementById('micStatus');
+  const voiceTitle = document.getElementById('voiceTitle');
+  const voiceSubtitle = document.getElementById('voiceSubtitle');
+  const headerReady = document.getElementById('headerReady');
+
+  let audioCtx, stream, analyser, dataArray, processor, micContext;
+  let isListening = false;
+
+  let baseRadius = 118;
+  let rotationAngle = 0;
+  let activeSources = [];
+  let aiVolume = 0;
+  let smoothedAIVolume = 0;
+  let micVolume = 0;
+
+  let nextStartTime = 0;
+
+  function resizeCanvas(){
+    canvas.width = canvas.clientWidth * devicePixelRatio;
+    canvas.height = canvas.clientHeight * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  let transcriptStep = 0;
+
+function handleTranscript(text) {
+
+    if (transcriptStep === 0) {
+
+        // User's speech
+        document.getElementById("userTranscript").textContent = text;
+
+        transcriptStep = 1;
+
+    } else {
+
+        // Jarvis response
+        document.getElementById("jarvisTranscript").textContent = text;
+
+        transcriptStep = 0;
+    }
 }
 
-window.addEventListener("resize",resizeCanvas);
-window.addEventListener("orientationchange",()=>{setTimeout(resizeCanvas,150)});
-resizeCanvas();
-
-function handleTranscript(text){
-if(transcriptStep===0){
-document.getElementById("userTranscript").textContent=text;
-transcriptStep=1;
-}else{
-document.getElementById("jarvisTranscript").textContent=text;
-transcriptStep=0;
-}
-}
-
-const particles=Array.from({length:60},()=>({angle:Math.random()*Math.PI*2,dist:Math.random()*150+100,size:Math.random()*2+1,speed:(Math.random()-.5)*.015}));
-
-audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:24000});
-
-function stopAllAudio(){
-activeSources.forEach(s=>{try{s.stop()}catch(e){}});
-activeSources=[];
-if(audioCtx)nextStartTime=audioCtx.currentTime;
-}
-
-function connectWebSocket(){
-if(ws&&ws.readyState===WebSocket.OPEN)return;
-
-ws=new WebSocket(`${wsUrl}/ws/live`);
-
-ws.onopen=()=>{
-console.log("🔥 BROWSER CONNECTED");
-connectionStatus.textContent="Connected";
-headerReady.textContent="Connected";
-};
-
-ws.onclose=()=>{
-console.log("🔌 CONNECTION CLOSED");
-connectionStatus.textContent="Offline";
-headerReady.textContent="Ready";
-
-if(processor){
-processor.onaudioprocess=null;
-try{processor.disconnect()}catch(e){}
-processor=null;
-}
-
-if(stream){
-stream.getTracks().forEach(track=>track.stop());
-stream=null;
-}
+  const particles = Array.from({length:60},()=>({
+    angle:Math.random()*Math.PI*2,
+    dist:Math.random()*150+100,
+    size:Math.random()*2+1,
+    speed:(Math.random()-.5)*.015
+  }));
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+    sampleRate:24000
+  });
+
+  function stopAllAudio(){
+    activeSources.forEach(s=>{
+      try{s.stop()}catch(e){}
+    });
+
+    activeSources=[];
+
+    if(audioCtx){
+      nextStartTime=audioCtx.currentTime;
+    }
+  }
+
+  /* WebSocket state */
+  ws.onopen=()=>{
+    console.log("🔥 BROWSER CONNECTED");
+
+    connectionStatus.textContent="Connected";
+    connectionStatus.classList.add("status-value");
+    headerReady.textContent="Connected";
+  };
+
+  ws.onclose=()=>{
+    console.log("🔌 CONNECTION CLOSED");
+
+    connectionStatus.textContent="Offline";
+    headerReady.textContent="Ready";
+
+    /* Stop frontend audio processing cleanly */
+    if(processor){
+      processor.onaudioprocess=null;
+      try{processor.disconnect()}catch(e){}
+      processor=null;
+    }
+
+    if(stream){
+      stream.getTracks().forEach(track=>track.stop());
+      stream=null;
+    }
+
+    isListening=false;
+    micStatus.textContent="Ready";
+    statusText.textContent="Ready";
+    micBtn.classList.remove("active");
+    voiceTitle.textContent="Yes, Sir?";
+    voiceSubtitle.textContent="I'm listening...";
+  };
+
+  ws.onerror=(err)=>{
+    console.error("WebSocket error:",err);
+    connectionStatus.textContent="Error";
+  };
+  
+  ws.onmessage=async(event)=>{
+    if(typeof event.data==="string"){
+      console.log("📝 Text received:", event.data);
+      handleTranscript(event.data)
+      return ;
+    }
+    /* Backend currently sends raw PCM audio */
+    if(!(event.data instanceof Blob) && !(event.data instanceof ArrayBuffer)){
+      return;
+    }
+
+    if(audioCtx.state==='suspended'){
+      await audioCtx.resume();
+    }
+
+    const arrayBuffer =
+      event.data instanceof Blob
+        ? await event.data.arrayBuffer()
+        : event.data;
+
+    const int16Array=new Int16Array(arrayBuffer);
+
+    if(!int16Array.length)return;
+
+    const float32Array=new Float32Array(int16Array.length);
 
-isListening=false;
-micStatus.textContent="Ready";
-statusText.textContent="Ready";
-micBtn.classList.remove("active");
-voiceTitle.textContent="Yes, Sir?";
-voiceSubtitle.textContent="I'm listening...";
-};
+    let sumSquare=0;
 
-ws.onerror=err=>{
-console.error("WebSocket error:",err);
-connectionStatus.textContent="Error";
-};
+    for(let i=0;i<int16Array.length;i++){
+      const sample=int16Array[i]/32768;
+      float32Array[i]=sample;
+      sumSquare+=sample*sample;
+    }
 
-ws.onmessage=async event=>{
-if(typeof event.data==="string"){
-console.log("📝 Text received:",event.data);
-handleTranscript(event.data);
-return;
-}
+    aiVolume=Math.sqrt(sumSquare/float32Array.length);
 
-if(!(event.data instanceof Blob)&&!(event.data instanceof ArrayBuffer))return;
+    const audioBuffer=audioCtx.createBuffer(
+      1,
+      float32Array.length,
+      24000
+    );
 
-if(audioCtx.state==="suspended")await audioCtx.resume();
+    audioBuffer.getChannelData(0).set(float32Array);
 
-const arrayBuffer=event.data instanceof Blob?await event.data.arrayBuffer():event.data;
-const int16Array=new Int16Array(arrayBuffer);
+    const source=audioCtx.createBufferSource();
 
-if(!int16Array.length)return;
+    source.buffer=audioBuffer;
+    source.connect(audioCtx.destination);
 
-const float32Array=new Float32Array(int16Array.length);
-let sumSquare=0;
+    if(nextStartTime<audioCtx.currentTime){
+      nextStartTime=audioCtx.currentTime;
+    }
 
-for(let i=0;i<int16Array.length;i++){
-const sample=int16Array[i]/32768;
-float32Array[i]=sample;
-sumSquare+=sample*sample;
-}
-
-aiVolume=Math.sqrt(sumSquare/float32Array.length);
-
-const audioBuffer=audioCtx.createBuffer(1,float32Array.length,24000);
-audioBuffer.getChannelData(0).set(float32Array);
-
-const source=audioCtx.createBufferSource();
-source.buffer=audioBuffer;
-source.connect(audioCtx.destination);
-
-if(nextStartTime<audioCtx.currentTime)nextStartTime=audioCtx.currentTime;
-
-source.start(nextStartTime);
-nextStartTime+=audioBuffer.duration;
-activeSources.push(source);
+    source.start(nextStartTime);
+    nextStartTime+=audioBuffer.duration;
 
-voiceTitle.textContent="JARVIS";
-voiceSubtitle.textContent="Speaking...";
-statusText.textContent="Speaking";
+    activeSources.push(source);
 
-source.onended=()=>{
-activeSources=activeSources.filter(s=>s!==source);
+    voiceTitle.textContent="JARVIS";
+    voiceSubtitle.textContent="Speaking...";
+    statusText.textContent="Speaking";
 
-if(activeSources.length===0){
-aiVolume=0;
-voiceTitle.textContent="Yes, Sir?";
-voiceSubtitle.textContent="I'm listening...";
-statusText.textContent=isListening?"Listening":"Ready";
-}
-};
-};
-}
+    source.onended=()=>{
+      activeSources=activeSources.filter(s=>s!==source);
 
-connectWebSocket();
+      if(activeSources.length===0){
+        aiVolume=0;
+        voiceTitle.textContent="Yes, Sir?";
+        voiceSubtitle.textContent="I'm listening...";
+        statusText.textContent=isListening?"Listening":"Ready";
+      }
+    };
+  };
 
-async function initAudio(){
-try{
-if(!ws||ws.readyState!==WebSocket.OPEN){
-connectionStatus.textContent="Connecting...";
-connectWebSocket();
-return;
-}
+  async function initAudio(){
 
-if(audioCtx.state==="suspended")await audioCtx.resume();
+    try{
 
-stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+      if(audioCtx.state==='suspended'){
+        await audioCtx.resume();
+      }
 
-micContext=new(window.AudioContext||window.webkitAudioContext)({sampleRate:16000});
+      stream=await navigator.mediaDevices.getUserMedia({
+        audio:{
+          echoCancellation:true,
+          noiseSuppression:true,
+          autoGainControl:true
+        }
+      });
 
-if(micContext.state==="suspended")await micContext.resume();
+      micContext=new (window.AudioContext || window.webkitAudioContext)({
+        sampleRate:16000
+      });
 
-const source=micContext.createMediaStreamSource(stream);
+      if(micContext.state==='suspended'){
+        await micContext.resume();
+      }
 
-processor=micContext.createScriptProcessor(2048,1,1);
-analyser=micContext.createAnalyser();
-analyser.fftSize=64;
+      const source=micContext.createMediaStreamSource(stream);
 
-dataArray=new Uint8Array(analyser.frequencyBinCount);
+      processor=micContext.createScriptProcessor(2048,1,1);
 
-source.connect(analyser);
-source.connect(processor);
+      analyser=micContext.createAnalyser();
+      analyser.fftSize=64;
 
-const muteGain=micContext.createGain();
-muteGain.gain.value=0;
+      dataArray=new Uint8Array(analyser.frequencyBinCount);
 
-processor.connect(muteGain);
-muteGain.connect(micContext.destination);
+      source.connect(analyser);
+      source.connect(processor);
 
-processor.onaudioprocess=e=>{
-if(!ws||ws.readyState!==WebSocket.OPEN||!isListening)return;
+      const muteGain=micContext.createGain();
+      muteGain.gain.value=0;
 
-const inputData=e.inputBuffer.getChannelData(0);
-const pcm16=new Int16Array(inputData.length);
-let sumSquare=0;
+      processor.connect(muteGain);
+      muteGain.connect(micContext.destination);
 
-for(let i=0;i<inputData.length;i++){
-const sample=Math.max(-1,Math.min(1,inputData[i]));
-pcm16[i]=sample<0?sample*0x8000:sample*0x7FFF;
-sumSquare+=sample*sample;
-}
+      processor.onaudioprocess=(e)=>{
 
-const rms=Math.sqrt(sumSquare/inputData.length);
-micVolume=rms;
+        /* IMPORTANT: never send after WS is closed */
+        if(!ws || ws.readyState!==WebSocket.OPEN)return;
+        if(!isListening)return;
 
-if(rms>0.05&&activeSources.length>0)stopAllAudio();
+        const inputData=e.inputBuffer.getChannelData(0);
+        const pcm16=new Int16Array(inputData.length);
 
-try{
-if(ws.readyState===WebSocket.OPEN)ws.send(pcm16.buffer.slice(0));
-}catch(err){
-console.warn("Audio sending stopped:",err.message);
-}
-};
+        let sumSquare=0;
 
-isListening=true;
-micStatus.textContent="Active";
-statusText.textContent="Listening";
-connectionStatus.textContent="Connected";
-voiceTitle.textContent="Yes, Sir?";
-voiceSubtitle.textContent="I'm listening...";
-micBtn.classList.add("active");
+        for(let i=0;i<inputData.length;i++){
 
-}catch(err){
-console.error(err);
-micStatus.textContent="Denied";
-statusText.textContent="Mic access denied";
-voiceSubtitle.textContent="Microphone access required";
-}
-}
+          const sample=Math.max(
+            -1,
+            Math.min(1,inputData[i])
+          );
 
-function getAudioVolume(){
-if(!isListening||!dataArray||!analyser)return 0;
+          pcm16[i]=
+            sample<0
+              ? sample*0x8000
+              : sample*0x7FFF;
 
-analyser.getByteTimeDomainData(dataArray);
-
-let sumSquare=0;
+          sumSquare+=sample*sample;
+        }
 
-for(let i=0;i<dataArray.length;i++){
-const sample=(dataArray[i]-128)/128;
-sumSquare+=sample*sample;
-}
+        const rms=Math.sqrt(
+          sumSquare/inputData.length
+        );
 
-return Math.sqrt(sumSquare/dataArray.length);
-}
+        micVolume=rms;
 
-function drawJARVIS(){
-requestAnimationFrame(drawJARVIS);
-
-const w=canvas.clientWidth;
-const h=canvas.clientHeight;
-const centerX=w/2;
-const isMobile=window.innerWidth<=700;
-const centerY=isMobile?Math.min(h*.28,190):Math.min(166,h*.43);
-const liveMic=isListening?getAudioVolume():0;
-
-smoothedAIVolume+=(aiVolume-smoothedAIVolume)*.15;
+        /* User interrupts current JARVIS speech */
+        if(rms>0.05 && activeSources.length>0){
+          stopAllAudio();
+        }
 
-const volume=Math.max(liveMic,smoothedAIVolume);
-const intensity=Math.min(volume*5,1);
-
-ctx.clearRect(0,0,w,h);
+        try{
+          if(ws.readyState===WebSocket.OPEN){
+            ws.send(pcm16.buffer.slice(0));
+          }
+        }catch(err){
+          console.warn("Audio sending stopped:",err.message);
+        }
+      };
 
-rotationAngle+=.008+intensity*.03;
-
-const mobileScale=isMobile?Math.min(window.innerWidth/500,.72):1;
-const dynamicRadius=(baseRadius*mobileScale)+intensity*45;
-
-const glowGrad=ctx.createRadialGradient(centerX,centerY,10,centerX,centerY,dynamicRadius*2);
-glowGrad.addColorStop(0,"rgba(0,240,255,.22)");
-glowGrad.addColorStop(.45,"rgba(0,110,255,.09)");
-glowGrad.addColorStop(1,"rgba(0,0,0,0)");
-
-ctx.fillStyle=glowGrad;
-ctx.beginPath();
-ctx.arc(centerX,centerY,dynamicRadius*2,0,Math.PI*2);
-ctx.fill();
-
-ctx.save();
-ctx.translate(centerX,centerY);
-ctx.rotate(rotationAngle);
-ctx.strokeStyle=`rgba(0,210,255,${.42+intensity*.58})`;
-ctx.lineWidth=2;
-
-for(let i=0;i<18;i++){
-ctx.beginPath();
-ctx.arc(0,0,dynamicRadius+17,(i*Math.PI)/9,(i*Math.PI)/9+.18);
-ctx.stroke();
-}
-
-ctx.restore();
-
-ctx.save();
-ctx.translate(centerX,centerY);
-ctx.rotate(-rotationAngle*1.5);
-ctx.strokeStyle="rgba(0,180,255,.55)";
-ctx.lineWidth=2;
-
-ctx.beginPath();
-ctx.arc(0,0,dynamicRadius-8,0,Math.PI*.78);
-ctx.stroke();
-
-ctx.beginPath();
-ctx.arc(0,0,dynamicRadius-8,Math.PI,Math.PI*1.78);
-ctx.stroke();
-
-ctx.restore();
-
-const numPoints=64;
-
-ctx.beginPath();
-ctx.strokeStyle="#00d8ff";
-ctx.lineWidth=1.8+intensity*2.5;
-ctx.shadowBlur=13;
-ctx.shadowColor="#00cfff";
-
-for(let i=0;i<=numPoints;i++){
-const angle=(i/numPoints)*Math.PI*2;
-let waveOffset=0;
-
-if(isListening){
-const current=getAudioVolume();
-waveOffset=current*25;
-waveOffset+=Math.sin(angle*8+Date.now()*.005)*current*6;
-}else{
-waveOffset=Math.sin(angle*8+Date.now()*.005)*3;
-}
-
-const r=dynamicRadius+waveOffset;
-const x=centerX+Math.cos(angle)*r;
-const y=centerY+Math.sin(angle)*r;
-
-if(i===0)ctx.moveTo(x,y);
-else ctx.lineTo(x,y);
-}
-
-ctx.closePath();
-ctx.stroke();
-
-const coreGrad=ctx.createRadialGradient(centerX,centerY,0,centerX,centerY,dynamicRadius*.50);
-coreGrad.addColorStop(0,"#ffffff");
-coreGrad.addColorStop(.15,"rgba(130,232,255,.95)");
-coreGrad.addColorStop(.42,"rgba(0,142,255,.65)");
-coreGrad.addColorStop(1,"rgba(0,70,255,0)");
-
-ctx.fillStyle=coreGrad;
-ctx.beginPath();
-ctx.arc(centerX,centerY,dynamicRadius*.52,0,Math.PI*2);
-ctx.fill();
-
-particles.forEach(p=>{
-p.angle+=p.speed+intensity*.02;
-
-const px=centerX+Math.cos(p.angle)*(p.dist+intensity*30);
-const py=centerY+Math.sin(p.angle)*(p.dist+intensity*30);
-
-ctx.fillStyle=`rgba(0,220,255,${.25+intensity*.7})`;
-ctx.beginPath();
-ctx.arc(px,py,p.size,0,Math.PI*2);
-ctx.fill();
-});
-
-ctx.shadowBlur=0;
-}
-
-micBtn.addEventListener("click",async()=>{
-if(!isListening){
-if(!ws||ws.readyState!==WebSocket.OPEN){
-connectWebSocket();
-
-const waitForConnection=setInterval(()=>{
-if(ws&&ws.readyState===WebSocket.OPEN){
-clearInterval(waitForConnection);
-initAudio();
-}
-},100);
-
-setTimeout(()=>clearInterval(waitForConnection),10000);
-}else{
-initAudio();
-}
-}else{
-if(stream){
-stream.getTracks().forEach(track=>track.stop());
-stream=null;
-}
-
-if(processor){
-processor.onaudioprocess=null;
-try{processor.disconnect()}catch(e){}
-processor=null;
-}
-
-if(micContext){
-try{await micContext.close()}catch(e){}
-micContext=null;
-}
-
-stopAllAudio();
-isListening=false;
-micStatus.textContent="Ready";
-statusText.textContent="Ready";
-micBtn.classList.remove("active");
-voiceTitle.textContent="Yes, Sir?";
-voiceSubtitle.textContent="I'm listening...";
-}
-});
-
-window.addEventListener("keydown",e=>{
-if(window.innerWidth<=700)return;
-
-if(e.code==="Space"&&!e.repeat&&document.activeElement.tagName!=="INPUT"&&document.activeElement.tagName!=="TEXTAREA"){
-e.preventDefault();
-if(!isListening)micBtn.click();
-}
-});
-
-function updateClock(){
-const now=new Date();
-
-document.getElementById("clockTime").textContent=now.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
-
-document.getElementById("clockDate").innerHTML=now.toLocaleDateString([],{weekday:"long",month:"long",day:"numeric",year:"numeric"}).replace(", ",",<br>");
-
-document.getElementById("clockSeconds").textContent=String(now.getSeconds()).padStart(2,"0");
-}
-
-updateClock();
-setInterval(updateClock,1000);
-
-const thinkingPath=document.getElementById("thinkingPath");
-let phase=0;
-
-function animateThinking(){
-phase+=.035;
-
-let d="M0 35";
-
-for(let x=0;x<=300;x+=10){
-const y=35+Math.sin(x*.055+phase)*18;
-d+=` L${x} ${y}`;
-}
-
-thinkingPath.setAttribute("d",d);
-requestAnimationFrame(animateThinking);
-}
-
-animateThinking();
-drawJARVIS();
+      isListening=true;
+
+      micStatus.textContent="Active";
+      statusText.textContent="Listening";
+      connectionStatus.textContent="Connected";
+
+      voiceTitle.textContent="Yes, Sir?";
+      voiceSubtitle.textContent="I'm listening...";
+
+      micBtn.classList.add("active");
+
+    }catch(err){
+
+      console.error(err);
+
+      micStatus.textContent="Denied";
+      statusText.textContent="Mic access denied";
+      voiceSubtitle.textContent="Microphone access required";
+    }
+  }
+
+  function getAudioVolume(){
+
+    if(!isListening || !dataArray || !analyser)return 0;
+
+    analyser.getByteTimeDomainData(dataArray);
+
+    let sumSquare=0;
+
+    for(let i=0;i<dataArray.length;i++){
+      const sample=(dataArray[i]-128)/128;
+      sumSquare+=sample*sample;
+    }
+
+    return Math.sqrt(sumSquare/dataArray.length);
+  }
+
+  function drawJARVIS(){
+
+    requestAnimationFrame(drawJARVIS);
+
+    const w=canvas.clientWidth;
+    const h=canvas.clientHeight;
+
+    /* Place reactor where it appears in the reference UI */
+    const centerX=w/2;
+    const centerY=Math.min(166,h*.43);
+
+    const liveMic=isListening?getAudioVolume():0;
+
+    smoothedAIVolume +=
+      (aiVolume-smoothedAIVolume)*.15;
+
+    const volume=Math.max(
+      liveMic,
+      smoothedAIVolume
+    );
+
+    const intensity=Math.min(volume*5,1);
+
+    ctx.clearRect(0,0,w,h);
+
+    rotationAngle+=.008+intensity*.03;
+
+    const dynamicRadius=baseRadius+intensity*45;
+
+    /* Ambient glow */
+    const glowGrad=ctx.createRadialGradient(
+      centerX,centerY,10,
+      centerX,centerY,dynamicRadius*2
+    );
+
+    glowGrad.addColorStop(
+      0,'rgba(0,240,255,.22)'
+    );
+
+    glowGrad.addColorStop(
+      .45,'rgba(0,110,255,.09)'
+    );
+
+    glowGrad.addColorStop(
+      1,'rgba(0,0,0,0)'
+    );
+
+    ctx.fillStyle=glowGrad;
+
+    ctx.beginPath();
+    ctx.arc(
+      centerX,
+      centerY,
+      dynamicRadius*2,
+      0,
+      Math.PI*2
+    );
+    ctx.fill();
+
+    /* Outer segmented ring */
+    ctx.save();
+    ctx.translate(centerX,centerY);
+    ctx.rotate(rotationAngle);
+
+    ctx.strokeStyle=
+      `rgba(0,210,255,${.42+intensity*.58})`;
+
+    ctx.lineWidth=2;
+
+    for(let i=0;i<18;i++){
+
+      ctx.beginPath();
+
+      ctx.arc(
+        0,
+        0,
+        dynamicRadius+17,
+        (i*Math.PI)/9,
+        (i*Math.PI)/9+.18
+      );
+
+      ctx.stroke();
+    }
+
+    ctx.restore();
+
+    /* Inner arcs */
+    ctx.save();
+    ctx.translate(centerX,centerY);
+    ctx.rotate(-rotationAngle*1.5);
+
+    ctx.strokeStyle='rgba(0,180,255,.55)';
+    ctx.lineWidth=2;
+
+    ctx.beginPath();
+    ctx.arc(
+      0,0,dynamicRadius-8,
+      0,Math.PI*.78
+    );
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(
+      0,0,dynamicRadius-8,
+      Math.PI,Math.PI*1.78
+    );
+    ctx.stroke();
+
+    ctx.restore();
+
+    /* Audio-reactive mesh */
+    const numPoints=64;
+
+    ctx.beginPath();
+    ctx.strokeStyle='#00d8ff';
+    ctx.lineWidth=1.8+intensity*2.5;
+    ctx.shadowBlur=13;
+    ctx.shadowColor='#00cfff';
+
+    for(let i=0;i<=numPoints;i++){
+
+      const angle=(i/numPoints)*Math.PI*2;
+
+      let waveOffset=0;
+
+      if(isListening){
+
+        const current=getAudioVolume();
+        waveOffset=current*25;
+
+        waveOffset+=
+          Math.sin(
+            angle*8+
+            Date.now()*.005
+          )*current*6;
+
+      }else{
+
+        waveOffset=
+          Math.sin(
+            angle*8+
+            Date.now()*.005
+          )*3;
+      }
+
+      const r=dynamicRadius+waveOffset;
+
+      const x=centerX+Math.cos(angle)*r;
+      const y=centerY+Math.sin(angle)*r;
+
+      if(i===0)ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    }
+
+    ctx.closePath();
+    ctx.stroke();
+
+    /* Bright center */
+    const coreGrad=ctx.createRadialGradient(
+      centerX,centerY,0,
+      centerX,centerY,dynamicRadius*.50
+    );
+
+    coreGrad.addColorStop(0,'#ffffff');
+    coreGrad.addColorStop(.15,'rgba(130,232,255,.95)');
+    coreGrad.addColorStop(.42,'rgba(0,142,255,.65)');
+    coreGrad.addColorStop(1,'rgba(0,70,255,0)');
+
+    ctx.fillStyle=coreGrad;
+
+    ctx.beginPath();
+    ctx.arc(
+      centerX,
+      centerY,
+      dynamicRadius*.52,
+      0,
+      Math.PI*2
+    );
+    ctx.fill();
+
+    /* Orbit particles */
+    particles.forEach(p=>{
+
+      p.angle+=p.speed+intensity*.02;
+
+      const px=
+        centerX+
+        Math.cos(p.angle)*
+        (p.dist+intensity*30);
+
+      const py=
+        centerY+
+        Math.sin(p.angle)*
+        (p.dist+intensity*30);
+
+      ctx.fillStyle=
+        `rgba(0,220,255,${.25+intensity*.7})`;
+
+      ctx.beginPath();
+
+      ctx.arc(
+        px,
+        py,
+        p.size,
+        0,
+        Math.PI*2
+      );
+
+      ctx.fill();
+    });
+
+    ctx.shadowBlur=0;
+  }
+
+  /* Mic button */
+  micBtn.addEventListener('click',async()=>{
+
+    if(!isListening){
+
+      if(!ws || ws.readyState!==WebSocket.OPEN){
+
+        /* Recreate socket if backend closed it */
+        ws=new WebSocket(`ws://localhost:8000/ws/live`);
+
+        ws.onopen=()=>{
+          connectionStatus.textContent="Connected";
+          headerReady.textContent="Connected";
+          initAudio();
+        };
+
+        ws.onerror=(err)=>{
+          console.error(err);
+          connectionStatus.textContent="Error";
+        };
+
+      }else{
+        initAudio();
+      }
+
+    }else{
+
+      if(stream){
+        stream.getTracks().forEach(
+          track=>track.stop()
+        );
+      }
+
+      if(processor){
+        processor.onaudioprocess=null;
+        try{processor.disconnect()}catch(e){}
+        processor=null;
+      }
+
+      if(micContext){
+        micContext.close();
+        micContext=null;
+      }
+
+      stopAllAudio();
+
+      isListening=false;
+
+      micStatus.textContent="Ready";
+      statusText.textContent="Ready";
+      micBtn.classList.remove("active");
+      voiceTitle.textContent="Yes, Sir?";
+      voiceSubtitle.textContent="I'm listening...";
+    }
+  });
+
+  /* Space = activate microphone */
+  window.addEventListener('keydown',e=>{
+    if(
+      e.code==='Space' &&
+      !e.repeat &&
+      document.activeElement.tagName!=='INPUT' &&
+      document.activeElement.tagName!=='TEXTAREA'
+    ){
+      e.preventDefault();
+
+      if(!isListening){
+        micBtn.click();
+      }
+    }
+  });
+
+  /* Clock */
+  function updateClock(){
+
+    const now=new Date();
+
+    document.getElementById('clockTime').textContent=
+      now.toLocaleTimeString([],{
+        hour:'2-digit',
+        minute:'2-digit'
+      });
+
+    document.getElementById('clockDate').innerHTML=
+      now.toLocaleDateString([],{
+        weekday:'long',
+        month:'long',
+        day:'numeric',
+        year:'numeric'
+      }).replace(', ',',<br>');
+
+    document.getElementById('clockSeconds').textContent=
+      String(now.getSeconds()).padStart(2,'0');
+  }
+
+  updateClock();
+  setInterval(updateClock,1000);
+
+  /* Thinking animation */
+  const thinkingPath=document.getElementById('thinkingPath');
+  let phase=0;
+
+  function animateThinking(){
+
+    phase+=.035;
+
+    let d='M0 35';
+
+    for(let x=0;x<=300;x+=10){
+
+      const y=
+        35+
+        Math.sin(x*.055+phase)*18;
+
+      d+=` L${x} ${y}`;
+    }
+
+    thinkingPath.setAttribute('d',d);
+
+    requestAnimationFrame(animateThinking);
+  }
+
+  animateThinking();
+  drawJARVIS();
 }
 
 startFriday();
 
 if("serviceWorker" in navigator){
-window.addEventListener("load",()=>{
-navigator.serviceWorker.register("service-worker.js").catch(err=>console.warn("Service Worker:",err));
-});
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("service-worker.js");
+  });
 }
 </script>
 </body>
