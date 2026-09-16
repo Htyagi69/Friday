@@ -746,7 +746,7 @@ async function startFriday(){
   //  const API_URL=window.location.hostname==="127.0.0.1"? "http://127.0.0.1:8000": "https://friday-production-a794.up.railway.app";
   //   const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
   //    ws = new WebSocket(`${wsUrl}/ws/live`);
-  ws = new WebSocket(`ws://friday-production-a794.up.railway.app/ws/live`);
+  ws = new WebSocket(`wss://friday-production-a794.up.railway.app/ws/live`);
 
   const canvas = document.getElementById('jarvisCanvas');
   const ctx = canvas.getContext('2d');
