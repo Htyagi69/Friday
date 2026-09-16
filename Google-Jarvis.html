@@ -743,7 +743,7 @@ let ws = null;
 async function startFriday(){
 
   // KEEP YOUR EXISTING BACKEND ENDPOINT
-   const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-production-a794.up.railway.app";
+   const API_URL=window.location.hostname==="127.0.0.1"? "http://127.0.0.1:8000": "https://friday-production-a794.up.railway.app";
     const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
      ws = new WebSocket(`${wsUrl}/ws/live`);
   // ws = new WebSocket(`ws://localhost:8000/ws/live`);
