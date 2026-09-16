@@ -333,7 +333,8 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                      await manager.save_message("user",user_transcript)
                 if manager.title_generated and jarvis_transcript:
                      await manager.save_message("jarvis",jarvis_transcript)
-
+                await websocket.send_text(user_transcript)
+                await websocket.send_text(jarvis_transcript)
                 user_transcript=""
                 jarvis_transcript=""
             
