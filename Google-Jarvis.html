@@ -107,7 +107,7 @@
   function handleTranscript(text){
     if(!text||!text.trim()) return;
     if(transcriptStep===0){
-        if(userTranscript) userTranscript.textContent=text;
+        // if(userTranscript) userTranscript.textContent=text;
         transcriptStep=1;
     }else{
         if(jarvisTranscript) jarvisTranscript.textContent=text;
