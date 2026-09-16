@@ -1721,13 +1721,15 @@ body{
 
 let ws = null;
 
+const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-production-a794.up.railway.app";
+const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
 
-async function startFriday(){
-
-  ws = new WebSocket(
-    `ws://localhost:8000/ws/live`
-  );
-
+async function startFriday(){  
+  const ws = new WebSocket(`${wsUrl}/ws/live`);
+  //  ws =
+  //           new WebSocket(
+  //             `ws://localhost:8000/ws/live`
+  //           );
 
   const canvas =
     document.getElementById(
@@ -3052,11 +3054,11 @@ async function startFriday(){
           ws.readyState !==
           WebSocket.OPEN
         ){
-
-          ws =
-            new WebSocket(
-              `ws://localhost:8000/ws/live`
-            );
+          const ws = new WebSocket(`${wsUrl}/ws/live`);
+          // ws =
+          //   new WebSocket(
+          //     `ws://localhost:8000/ws/live`
+          //   );
 
 
           ws.onopen = () => {
