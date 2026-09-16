@@ -355,6 +355,9 @@ async def receive_audio(session,websocket: WebSocket):
                     mime_type="audio/pcm;rate=16000"
                 )
             )
+@app.get("/test-ws")
+async def test_ws():
+    return {"websocket_route":"/ws/live","status":"present"}
 
 @app.websocket("/ws/live")
 async def live_stream(websocket: WebSocket):
