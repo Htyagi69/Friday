@@ -104,6 +104,7 @@
   <script>
   let ws = null;
   let transcriptStep=0;
+  let jarvisTranscript=""
   function handleTranscript(text){
     if(!text||!text.trim()) return;
     if(transcriptStep===0){
@@ -117,10 +118,10 @@
 
   async function startFriday(){
 
-    // const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-production-a794.up.railway.app";
-    // const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
-    // const ws = new WebSocket(`${wsUrl}/ws/live/${sessionId}`);
-     ws = new WebSocket(`ws://localhost:8000/ws/live`);
+    const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-exny.onrender.com";
+    const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
+    const ws = new WebSocket(`${wsUrl}/ws/live`);
+    //  ws = new WebSocket(`ws://localhost:8000/ws/live`);
 
     const canvas = document.getElementById('jarvisCanvas');
     const ctx = canvas.getContext('2d');
@@ -445,3 +446,4 @@ function drawJARVIS() {
 </script>
 </body>
 </html>
+
