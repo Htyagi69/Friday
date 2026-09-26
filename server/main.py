@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from conversation.conversation import db
 from liveStream import router as live_stream_router
 from notification.webPush import send_notification
+from conversation.conversation import db
 
 load_dotenv()
 
@@ -29,12 +30,44 @@ def read():
     return "Hello from uv ok" 
 
 @app.post("/test-notify")
-def testNotification(token:str):
+async def testNotification():
+    device=await db.devicetoken.find_first()
+    if not device:
+         return {
+            "success": False,
+            "message": "No FCM token found"
+        }
     message_id=send_notification(
-        token,
+        device.token,
         "Friday",
         "Jarvis Online,Sir 🎉"
     )
-    return {"Message":message_id}
+    return { 
+        "success": True,
+        "Message":message_id
+        }
+
+@app.post("/register-device")
+async def register_device(data:dict):
+    token=data["token"]
+    # print("FCM Token",token)
+    if not token:
+        return {
+            "success": False,
+            "message": "FCM token missing"
+        }
+
+    await db.devicetoken.upsert(
+             where={
+                "token": token
+            },
+            data={
+                "create":{
+                "token":token
+                },
+                "update":{}
+            })
+
+    return {"success":True}
 
 app.include_router(live_stream_router)

@@ -884,6 +884,9 @@ body{
           <span class="mic-glyph">♟</span>
         </button>
       </div>
+      <button onclick="testNotification()">
+    Test Friday Notification
+</button>
 
       <div class="voice-help">Press <kbd>Space</kbd> to talk</div>
     </div>
@@ -891,6 +894,8 @@ body{
     <div class="quote">JARVIS // ADVANCED PERSONAL ASSISTANT</div>
   </main>
 </div>
+
+<script type="module" src="./script.js"></script>
 
 <script>
 /* =========================================================
@@ -925,10 +930,10 @@ function handleTranscript(text) {
 async function startFriday(){
 
   // KEEP YOUR EXISTING BACKEND ENDPOINT
-     const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-exny.onrender.com";
-    const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
-     ws = new WebSocket(`${wsUrl}/ws/live`);
-    //  ws = new WebSocket(`ws://localhost:8000/ws/live`);
+    //  const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-exny.onrender.com";
+    // const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
+    //  ws = new WebSocket(`${wsUrl}/ws/live`);
+     ws = new WebSocket(`ws://localhost:8000/ws/live`);
 
   const canvas = document.getElementById('jarvisCanvas');
   const ctx = canvas.getContext('2d');
@@ -1573,12 +1578,6 @@ async function startFriday(){
 }
 
 startFriday();
-
-if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("service-worker.js");
-  });
-}
 </script>
 </body>
 </html>
