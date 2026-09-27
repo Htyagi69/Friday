@@ -8,4 +8,5 @@ dependencies = [
     "mss>=10.2.0",
     "tree-sitter-typescript>=0.23.2",
     "prisma==0.15.0",
+    "firebase-admin>=7.7.0",
 ]

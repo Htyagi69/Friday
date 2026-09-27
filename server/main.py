@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -6,14 +7,24 @@ from conversation.conversation import db
 from liveStream import router as live_stream_router
 from notification.webPush import send_notification
 from conversation.conversation import db
+from tools.backgroundWorker import (load_reminders_fromdb,reminder_worker)
 
 load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     await  db.connect()
-    yield
-    await db.disconnect()
+    await load_reminders_fromdb()
+    reminder_task=asyncio.create_task(reminder_worker())
+    try:
+       yield
+    finally:
+       reminder_task.cancel()
+       try:
+           await reminder_task
+       except asyncio.CancelledError:
+           pass
+       await db.disconnect()
 
 app=FastAPI(lifespan=lifespan)
 
@@ -40,7 +51,7 @@ async def testNotification():
     message_id=send_notification(
         device.token,
         "Friday",
-        "Jarvis Online,Sir 🎉"
+        "Jarvis Back Online,Sir 🎉"
     )
     return { 
         "success": True,

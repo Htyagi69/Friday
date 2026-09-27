@@ -1,5 +1,7 @@
 import asyncio
 from prisma import Prisma
+from datetime import datetime
+
 
 db= Prisma()
 
@@ -19,7 +21,29 @@ class ConversationManager:
            )
            self.active_session_id=str(session.id)
            return self.active_session_id
-   
+       
+       async def set_reminder(self,title,message,timeStamp):
+            if (title and message and timeStamp):
+               remind_at=datetime.fromisoformat(timeStamp)
+               reminder=await db.reminder.create(
+                    data={
+                        "title":title,
+                        "message":message,
+                        "remindAt":remind_at
+                    }
+                ) 
+               from tools.backgroundWorker import add_reminder_to_queue
+               await add_reminder_to_queue(reminder)
+               return {
+                    "success":True,
+                    "message":f"Successfully setted {title} : {message} and inform you at {timeStamp} "
+               }
+            else:
+                  return {
+                    "success":False,
+                    "message":f"Something missing {title} : {message }:{timeStamp}"
+                  }
+            
        async def switch_session(self,title):
                session=await db.session.find_first(
                     where={"title":title}

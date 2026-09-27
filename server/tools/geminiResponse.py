@@ -17,6 +17,28 @@ switch_session_tool = types.FunctionDeclaration(
         required=["title"]
     )
 )
+set_reminder_tool = types.FunctionDeclaration(
+    name="set_reminder",
+    description="set the reminder for future by storing it in databse",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "title": types.Schema(
+                type=types.Type.STRING,
+                description="The exact title for reminder."
+            ),
+            "message": types.Schema(
+                type=types.Type.STRING,
+                description="information about reminder"
+            ),
+            "timeStamp": types.Schema(
+                type=types.Type.STRING,
+                description="The time at which reminder should remind."
+            )
+        },
+        required=["title","message","timeStamp"]
+    )
+)
 
 initial_limit=4
 
@@ -61,6 +83,22 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                         function_responses=[
                             types.FunctionResponse(
                                 name="switch_session",
+                                id=function_call.id,
+                                response=result
+                            )
+                        ]
+                    )
+               elif function_call.name == "set_reminder":
+                    title = function_call.args.get("title")
+                    message = function_call.args.get("message")
+                    timeStamp = function_call.args.get("timeStamp")
+                    # print(" Requested session:", title)
+                    result = await manager.set_reminder(title,message,timeStamp)
+                    # print(" Switch result:", result)
+                    await session.send_tool_response(
+                        function_responses=[
+                            types.FunctionResponse(
+                                name="set_reminder",
                                 id=function_call.id,
                                 response=result
                             )
@@ -179,7 +217,7 @@ Do not expose implementation details.
           tools=[
             types.Tool(
                 function_declarations=[
-                    switch_session_tool
+                    switch_session_tool,set_reminder_tool
                 ]
             )
         ],

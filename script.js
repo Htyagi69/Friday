@@ -74,6 +74,26 @@ if(permission==="granted"){
        }
 }
 
+
+function speak(text) {
+    if (!("speechSynthesis" in window)) {
+        console.log("Speech synthesis not supported");
+        return;
+    }
+
+    // Stop any previous speech
+    speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "en-IN";
+    utterance.rate = 0.95;
+    utterance.pitch = 0.85;
+    utterance.volume = 1;
+
+    speechSynthesis.speak(utterance);
+}
+
 onMessage(messaging, (payload) => {
     // console.log("🔥 Foreground message:", payload);
 
@@ -84,6 +104,7 @@ onMessage(messaging, (payload) => {
         body: body,
         icon: "/assets/Friday.png"
     });
+    speak(`${title}. ${body}`)
 });
 
 async function testNotification(){
