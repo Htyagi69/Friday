@@ -1,7 +1,11 @@
+import os
+import json
 import firebase_admin
 from firebase_admin import credentials,messaging
 
-cred=credentials.Certificate('firebase.json')
+firebase_json=os.environ["FIREBASE_CONNECTORS"]
+
+cred=credentials.Certificate(json.loads(firebase_json))
 
 firebase_admin.initialize_app(cred)
 
@@ -16,5 +20,3 @@ def send_notification(token:str,title:str,body:str):
 
     return messaging.send(message)
 
-
-# BHeElUz3rChHIJTwCsdL5H8rbVsmGZgXbpSmJxwTANdDARlendA_TsaCsdg9IWK8ikVyT3GPamItTARYVpac2lk
