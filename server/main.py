@@ -74,6 +74,7 @@ async def register_device(data:dict):
             },
             data={
                 "create":{
+                "userId":"Tony Stark",
                 "token":token
                 },
                 "update":{}
