@@ -19,7 +19,28 @@ switch_session_tool = types.FunctionDeclaration(
 )
 set_reminder_tool = types.FunctionDeclaration(
     name="set_reminder",
-    description="set the reminder for future by storing it in databse",
+    description="""
+    Schedule a reminder for the user.
+
+    The user's timezone is Asia/Kolkata (IST, UTC+05:30).
+
+    For relative reminders:
+    - Use schedule_type='relative'.
+    - Set delay_seconds to the requested duration in seconds.
+    - Examples: 1 minute = 60, 10 minutes = 600.
+    - Do not calculate or guess the absolute timestamp.
+
+    For clock-time reminders:
+    - Use schedule_type='absolute'.
+    - Set local_datetime to the requested date and time in
+      YYYY-MM-DDTHH:MM:SS format, without a timezone suffix.
+    - Interpret the date and time in Asia/Kolkata.
+    - Example: 11:44 PM on September 27, 2026 is
+      2026-09-27T23:44:00.
+
+    Always use the current date when resolving today or tomorrow.
+    Never invent a date or time if the request is ambiguous.
+    """,
     parameters=types.Schema(
         type=types.Type.OBJECT,
         properties={
@@ -31,12 +52,20 @@ set_reminder_tool = types.FunctionDeclaration(
                 type=types.Type.STRING,
                 description="information about reminder"
             ),
-            "timeStamp": types.Schema(
-                type=types.Type.STRING,
-                description="The time at which reminder should remind."
-            )
+            "schedule_type": types.Schema(
+                type= "STRING",
+                enum= ["relative", "absolute"]
+            ),
+             "delay_seconds": types.Schema(
+                type= "INTEGER",
+                description= "Required for relative reminders."
+             ),
+             "local_datetime": types.Schema(
+                type= "STRING",
+                description= "Required for absolute reminders; local IST time."
+             )
         },
-        required=["title","message","timeStamp"]
+        required=["title","message","schedule_type"]
     )
 )
 
@@ -91,9 +120,16 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                elif function_call.name == "set_reminder":
                     title = function_call.args.get("title")
                     message = function_call.args.get("message")
-                    timeStamp = function_call.args.get("timeStamp")
+                    schedule_type = function_call.args.get("schedule_type")
+                    delay_seconds = function_call.args.get("delay_seconds")
+                    local_datetime = function_call.args.get("local_datetime")
                     # print(" Requested session:", title)
-                    result = await manager.set_reminder(title,message,timeStamp)
+                    result = await manager.set_reminder(title,message,schedule_type,delay_seconds,local_datetime)
+                    # print("title:", title)
+                    # print("message:", message)
+                    # print("schedule_type:", schedule_type)
+                    # print("delay_seconds:", delay_seconds)
+                    # print("local_datetime:", local_datetime)
                     # print(" Switch result:", result)
                     await session.send_tool_response(
                         function_responses=[

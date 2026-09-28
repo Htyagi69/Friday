@@ -9,4 +9,5 @@ dependencies = [
     "tree-sitter-typescript>=0.23.2",
     "prisma==0.15.0",
     "firebase-admin>=7.7.0",
+    "tzdata>=2026.4",
 ]

@@ -1,11 +1,14 @@
+
 import asyncio
+from zoneinfo import ZoneInfo
 from prisma import Prisma
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 
 db= Prisma()
 
 __all__=["ConversationManager","db"]
+IST = ZoneInfo("Asia/Kolkata")
 
 class ConversationManager:
        def __init__(self):
@@ -22,27 +25,64 @@ class ConversationManager:
            self.active_session_id=str(session.id)
            return self.active_session_id
        
-       async def set_reminder(self,title,message,timeStamp):
-            if (title and message and timeStamp):
-               remind_at=datetime.fromisoformat(timeStamp)
-               reminder=await db.reminder.create(
-                    data={
-                        "title":title,
-                        "message":message,
-                        "remindAt":remind_at
-                    }
-                ) 
-               from tools.backgroundWorker import add_reminder_to_queue
-               await add_reminder_to_queue(reminder)
+       async def set_reminder(self,title,message,schedule_type,delay_seconds=None,local_datetime=None):
+        now = datetime.now(timezone.utc)
+        if schedule_type == "relative":
+              if delay_seconds is None or delay_seconds <= 0:
+                 return {
+                "success": False,
+                "message": "A valid delay is required."
+                }
+
+              remind_at = now + timedelta(seconds=delay_seconds)
+               
+        elif schedule_type == "absolute":
+
+           if not local_datetime:
                return {
-                    "success":True,
-                    "message":f"Successfully setted {title} : {message} and inform you at {timeStamp} "
+                "success": False,
+                "message": "A reminder date and time is required."
                }
-            else:
-                  return {
-                    "success":False,
-                    "message":f"Something missing {title} : {message }:{timeStamp}"
-                  }
+
+           local_time = datetime.fromisoformat(local_datetime)
+           if local_time.tzinfo is not None:
+            return {
+                "success": False,
+                "message": "Provide local IST time without timezone."
+            }
+
+           remind_at = local_time.replace(tzinfo=IST).astimezone(timezone.utc)
+   
+           if remind_at <= now:
+               return {
+                   "success": False,
+                   "message": "The reminder time must be in the future."
+               }
+
+        else:
+            return {
+            "success": False,
+            "message": "Invalid schedule type."
+            }
+
+        reminder = await db.reminder.create(
+           data={
+            "userId": "Tony Stark",
+            "title": title,
+            "message": message,
+            "remindAt": remind_at
+            }
+          )
+
+        from tools.backgroundWorker import add_reminder_to_queue
+
+        await add_reminder_to_queue(reminder)
+
+        return {
+        "success": True,
+        "message": f"Reminder scheduled: {title}",
+        "remindAt": remind_at.isoformat()
+         }
             
        async def switch_session(self,title):
                session=await db.session.find_first(
