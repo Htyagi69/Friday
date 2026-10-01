@@ -132,17 +132,26 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                             )
                         ]
                     )
-               elif function_call.name == "get_unread_emails":
-                    total = function_call.args.get("num_of_mails")
+               elif function_call.name == "set_reminder":
+                    title = function_call.args.get("title")
+                    message = function_call.args.get("message")
+                    schedule_type = function_call.args.get("schedule_type")
+                    delay_seconds = function_call.args.get("delay_seconds")
+                    local_datetime = function_call.args.get("local_datetime")
                     # print(" Requested session:", title)
-                    result =  get_unread_emails(total)
+                    result = await manager.set_reminder(title,message,schedule_type,delay_seconds,local_datetime)
+                    # print("title:", title)
+                    # print("message:", message)
+                    # print("schedule_type:", schedule_type)
+                    # print("delay_seconds:", delay_seconds)
+                    # print("local_datetime:", local_datetime)
                     # print(" Switch result:", result)
                     await session.send_tool_response(
                         function_responses=[
                             types.FunctionResponse(
-                                name="get_unread_emails",
+                                name="set_reminder",
                                 id=function_call.id,
-                                response={"emails": result or "No unread emails found."}
+                                response=result
                             )
                         ]
                     )
