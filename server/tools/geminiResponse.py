@@ -1,6 +1,7 @@
 from google.genai import types
 from fastapi import FastAPI,File,UploadFile,WebSocket,WebSocketDisconnect
 from conversation.conversation import db
+from tools.email_reader import get_unread_emails
 from tools.get_session_title import get_session_title
 
 switch_session_tool = types.FunctionDeclaration(
@@ -15,6 +16,20 @@ switch_session_tool = types.FunctionDeclaration(
             )
         },
         required=["title"]
+    )
+)
+email_summarizer_tool = types.FunctionDeclaration(
+    name="get_unread_emails",
+    description="fetching the unread emails based on demand and get the insight out of it",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "num_of_mails": types.Schema(
+                type=types.Type.INTEGER,
+                description="denotes the number of  mails to fetch"
+            )
+        },
+        required=["num_of_mails"]
     )
 )
 set_reminder_tool = types.FunctionDeclaration(
@@ -113,33 +128,50 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                             types.FunctionResponse(
                                 name="switch_session",
                                 id=function_call.id,
-                                response=result
+                                response=result 
                             )
                         ]
                     )
-               elif function_call.name == "set_reminder":
-                    title = function_call.args.get("title")
-                    message = function_call.args.get("message")
-                    schedule_type = function_call.args.get("schedule_type")
-                    delay_seconds = function_call.args.get("delay_seconds")
-                    local_datetime = function_call.args.get("local_datetime")
+               elif function_call.name == "get_unread_emails":
+                    total = function_call.args.get("num_of_mails")
                     # print(" Requested session:", title)
-                    result = await manager.set_reminder(title,message,schedule_type,delay_seconds,local_datetime)
-                    # print("title:", title)
-                    # print("message:", message)
-                    # print("schedule_type:", schedule_type)
-                    # print("delay_seconds:", delay_seconds)
-                    # print("local_datetime:", local_datetime)
+                    result =  get_unread_emails(total)
                     # print(" Switch result:", result)
                     await session.send_tool_response(
                         function_responses=[
                             types.FunctionResponse(
-                                name="set_reminder",
+                                name="get_unread_emails",
                                 id=function_call.id,
-                                response=result
+                                response={"emails": result or "No unread emails found."}
                             )
                         ]
                     )
+               elif function_call.name == "get_unread_emails":
+                    total = function_call.args.get("num_of_mails")
+                
+                    print(" TOOL START")
+                    print(" Requested mails:", total)
+                
+                    result = get_unread_emails(total)
+                
+                    print(" Gmail result received")
+                    print(result)
+                
+                    print(" Sending tool response to Gemini...")
+                
+                    await session.send_tool_response(
+                        function_responses=[
+                            types.FunctionResponse(
+                                name="get_unread_emails",
+                                id=function_call.id,
+                                response={
+                                    "emails": result or "No unread emails found."
+                                }
+                            )
+                        ]
+                    )
+
+                    print(" Tool response sent successfully")
            continue
 
         server_content=message.server_content
@@ -253,7 +285,7 @@ Do not expose implementation details.
           tools=[
             types.Tool(
                 function_declarations=[
-                    switch_session_tool,set_reminder_tool
+                    switch_session_tool,set_reminder_tool,email_summarizer_tool
                 ]
             )
         ],
