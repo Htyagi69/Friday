@@ -4,6 +4,26 @@ from conversation.conversation import db
 from tools.email_reader import get_unread_emails
 from tools.get_session_title import get_session_title
 
+
+nativeSpeakers={
+    "Puck"      :     "United States (American)Upbeat, sharp, witty, and energetic",
+    "Charon"    :     "United States (American)Deep, mysterious, and informative",
+    "Kore"      :     "United States (American)Warm, friendly, and firm",
+    "Fenrir"    :     "United States (American)Strong, confident, and excitable",
+    "Aoede"     :     "United States (American)Clear, melodic, and breezy",
+    "Zephyr"    :     "United States (American)Bright and animated",
+    "Orus"      :     "United States (American)Firm and structured",
+    "Autonoe"   :     "United States (American)Bright and engaging",
+    "Umbriel"   :     "United States (American)Easy-going and relaxed",
+    "Erinome"   :     "United States (American)Clear and precise",
+    "Laomedeia" :     "United States (American)Upbeat and positive",
+    "Schedar"   :     "United States (American)Even and balanced",
+    "Achird"    :     "United States (American)Friendly and welcoming",
+    "Capella"   :     "United Kingdom (British)Serene, clear, and higher-pitched",
+    "Violet"    :     "United Kingdom (British)Formal, steady, and traditionally polite",
+    "Calathea"  :     "Australia (Aussie)Bright, relaxed, and conversational"
+}
+
 switch_session_tool = types.FunctionDeclaration(
     name="switch_session",
     description="Switch to a previous conversation by its exact title.",
@@ -16,6 +36,38 @@ switch_session_tool = types.FunctionDeclaration(
             )
         },
         required=["title"]
+    )
+)
+get_camera_access_tool = types.FunctionDeclaration(
+    name="start_camera",
+    description="a function that opens up the camera of the device provide the screenshots of outside world",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={},
+    )
+)
+stop_camera_access_tool = types.FunctionDeclaration(
+    name="stop_camera",
+    description="a function that closes the camera of the device",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={},
+    )
+)
+get_screen_access_tool = types.FunctionDeclaration(
+    name="get_screen",
+    description="a function that helps to see the entire screen of the device",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={},
+    )
+)
+stop_screen_share_tool = types.FunctionDeclaration(
+    name="stop_screen_share",
+    description="a function that closes screen Sharing",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={},
     )
 )
 email_summarizer_tool = types.FunctionDeclaration(
@@ -181,6 +233,84 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                     )
 
                     print(" Tool response sent successfully")
+
+               elif function_call.name == "start_camera":
+                
+                    print(" TOOL START")
+                    result =await manager.start_camera(session)
+                
+                    print("camera_task initiated")
+                    print(result)
+                                
+                    await session.send_tool_response(
+                        function_responses=[
+                            types.FunctionResponse(
+                                name="start_camera",
+                                id=function_call.id,
+                                response=result
+                            )
+                        ]
+                    )
+
+                    print(" Tool response sent successfully")
+               elif function_call.name == "get_screen":
+                
+                    print(" TOOL START")
+                    result =await manager.get_screen(session)
+                
+                    print("screen Share initiated")
+                    print(result)
+                                
+                    await session.send_tool_response(
+                        function_responses=[
+                            types.FunctionResponse(
+                                name="get_screen",
+                                id=function_call.id,
+                                response=result
+                            )
+                        ]
+                    )
+
+                    print(" Tool response sent successfully")
+
+               elif function_call.name == "stop_camera":
+                
+                    print(" TOOL START")
+                    result =await manager.stop_camera()
+                
+                    print("camera_task cancel")
+                    print(result)
+                                
+                    await session.send_tool_response(
+                        function_responses=[
+                            types.FunctionResponse(
+                                name="stop_camera",
+                                id=function_call.id,
+                                response=result
+                            )
+                        ]
+                    )
+
+                    print(" Tool response sent successfully")
+               elif function_call.name == "stop_screen_share":
+                
+                    print(" TOOL START")
+                    result =await manager.stop_screen_share()
+                
+                    print("screen_task cancel")
+                    print(result)
+                                
+                    await session.send_tool_response(
+                        function_responses=[
+                            types.FunctionResponse(
+                                name="stop_screen_share",
+                                id=function_call.id,
+                                response=result
+                            )
+                        ]
+                    )
+
+                    print(" Tool response sent successfully")
            continue
 
         server_content=message.server_content
@@ -291,10 +421,17 @@ Do not expose implementation details.
                    )
                ]
            ),
+           speech_config=types.SpeechConfig(
+        voice_config=types.VoiceConfig(
+            prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                voice_name="Zephyr"
+            )
+        )
+    ),
           tools=[
             types.Tool(
                 function_declarations=[
-                    switch_session_tool,set_reminder_tool,email_summarizer_tool
+                    switch_session_tool,set_reminder_tool,email_summarizer_tool,get_camera_access_tool,stop_camera_access_tool,get_screen_access_tool,stop_screen_share_tool
                 ]
             )
         ],
