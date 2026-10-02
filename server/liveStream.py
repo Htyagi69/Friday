@@ -29,7 +29,7 @@ async def live_stream(websocket: WebSocket):
                 response=asyncio.create_task(
                    sendget_gemini_response(manager,session,websocket,tempMessages)
                 )
-                audio_task = asyncio.create_task(receive_audio(session,websocket))
+                audio_task = asyncio.create_task(receive_audio(session,websocket,manager))
                 switch_task = asyncio.create_task(manager.watch_session_switch())
                 done, pending = await asyncio.wait(
                     [

@@ -24,10 +24,10 @@ class ConversationManager:
                  self.title_generated=False
                  self.camera_queue=asyncio.Queue(maxsize=1)
                  self.screen_queue=asyncio.Queue(maxsize=1)
-                 self.camera_task=None
-                 self.screen_task=None
                  self.camera_sender_task=None
                  self.screen_sender_task=None
+                 self.camera_active=False
+                 self.screen_active=False
        
        async def create_session(self,title):
            session=await db.session.create(
@@ -265,13 +265,16 @@ class ConversationManager:
                  cap.release()
                  print("camera closed")
 
-       async def start_camera(self,session):
-          if self.camera_task and not self.camera_task.done():
+       async def start_camera(self,websocket,session):
+          if self.camera_sender_task and not self.camera_sender_task.done():
                return{
                     "success":True,
                     "message":"Camera already active"
                }
-          self.camera_task=asyncio.create_task(self._camera_loop())
+          self.camera_active=True
+          await websocket.send_json({
+               "type":"start_camera"
+          })
           self.camera_sender_task=asyncio.create_task(
                send_camera_frames(self,session)
           )
@@ -280,14 +283,7 @@ class ConversationManager:
                "message":"Camera started, you can see the user's surroundings"
           }
        
-       async def stop_camera(self):
-          if self.camera_task and not self.camera_task.done():
-               self.camera_task.cancel()
-               await asyncio.gather(
-                    self.camera_task,
-                    return_exceptions=True
-               )
-          self.camera_task=None
+       async def stop_camera(self,websocket):
           if self.camera_sender_task and not self.camera_sender_task.done():
                self.camera_sender_task.cancel()
                await asyncio.gather(
@@ -295,6 +291,10 @@ class ConversationManager:
                     return_exceptions=True
                )
           self.camera_sender_task=None
+          self.camera_active=False
+          await websocket.send_json({
+                "type": "stop_camera"
+           })
           while not self.camera_queue.empty():
               try:
                   self.camera_queue.get_nowait()
@@ -307,13 +307,16 @@ class ConversationManager:
                 "message":"Camera stopped"
                }
        
-       async def get_screen(self,session):
-            if self.screen_task and not self.screen_task.done():
+       async def get_screen(self,websocket,session):
+            if self.screen_sender_task and not self.screen_sender_task.done():
                   return{
                         "success":True,
                         "message":"Screen already shared"
                      }
-            self.screen_task=asyncio.create_task(self._screen_loop())
+            self.screen_active=True
+            await websocket.send_json({
+               "type":"start_screen"
+              })
             self.screen_sender_task=asyncio.create_task(
                   send_screen_frames(self,session)
             )
@@ -324,15 +327,18 @@ class ConversationManager:
                "message":"screen Sharing started, you can see the device screen"
           }
        
-       async def stop_screen_share(self):
-          if self.screen_task and not self.screen_task.done():
-               self.screen_task.cancel()
+       async def stop_screen_share(self,websocket):
+          if self.screen_sender_task and not self.screen_sender_task.done():
+               self.screen_sender_task.cancel()
                await asyncio.gather(
-                    self.screen_task,
+                    self.screen_sender_task,
                     return_exceptions=True
                )
-          self.screen_task=None
-
+          self.screen_sender_task=None
+          self.screen_active=False
+          await websocket.send_json({
+               "type": "stop_screen"
+         }) 
           while not self.screen_queue.empty():
               try:
                   self.screen_queue.get_nowait()

@@ -237,7 +237,7 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                elif function_call.name == "start_camera":
                 
                     print(" TOOL START")
-                    result =await manager.start_camera(session)
+                    result =await manager.start_camera(websocket,session)
                 
                     print("camera_task initiated")
                     print(result)
@@ -256,7 +256,7 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                elif function_call.name == "get_screen":
                 
                     print(" TOOL START")
-                    result =await manager.get_screen(session)
+                    result =await manager.get_screen(websocket,session)
                 
                     print("screen Share initiated")
                     print(result)
@@ -276,7 +276,7 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                elif function_call.name == "stop_camera":
                 
                     print(" TOOL START")
-                    result =await manager.stop_camera()
+                    result =await manager.stop_camera(websocket)
                 
                     print("camera_task cancel")
                     print(result)
@@ -295,7 +295,7 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                elif function_call.name == "stop_screen_share":
                 
                     print(" TOOL START")
-                    result =await manager.stop_screen_share()
+                    result =await manager.stop_screen_share(websocket)
                 
                     print("screen_task cancel")
                     print(result)

@@ -927,12 +927,215 @@ function handleTranscript(text) {
     }
 }
 
+let cameraStream=null
+let video=null
+let canvas=null
+let cameraInterval=null
+
+async function startCamera(websocket) {
+    console.log("📷 startCamera() called");
+
+    try {
+        console.log("📷 Requesting camera permission...");
+
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        });
+
+        console.log(" CAMERA STREAM CREATED");
+        console.log(" Tracks:", cameraStream.getVideoTracks());
+
+        const track = cameraStream.getVideoTracks()[0];
+
+        console.log(" Camera label:", track.label);
+        console.log(" Camera state:", track.readyState);
+        console.log(" Camera enabled:", track.enabled);
+
+        video = document.createElement("video");
+        video.srcObject = cameraStream;
+        video.autoplay = true;
+        video.playsInline = true;
+
+        await video.play();
+
+        console.log("✅ VIDEO PLAYING");
+
+        canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        cameraInterval = setInterval(() => {
+
+            if (!cameraStream) {
+                console.log("❌ No camera stream");
+                return;
+            }
+
+            if (websocket.readyState !== WebSocket.OPEN) {
+                console.log("❌ WebSocket not open");
+                return;
+            }
+
+            console.log(" Capturing camera frame...");
+
+            canvas.width = 1280;
+            canvas.height = 720;
+
+            ctx.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            canvas.toBlob((blob) => {
+
+                if (!blob) {
+                    console.log("❌ Failed to create JPEG");
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onloadend = () => {
+
+                    const base64 = reader.result.split(",")[1];
+
+                    console.log(
+                        " Sending camera frame:",
+                        Math.round(base64.length / 1024),
+                        "KB"
+                    );
+
+                    websocket.send(JSON.stringify({
+                        type: "camera_frame",
+                        data: base64
+                    }));
+                };
+
+                reader.readAsDataURL(blob);
+
+            }, "image/jpeg", 0.8);
+
+        }, 500);
+
+    } catch (error) {
+
+        console.error("❌ CAMERA ERROR:", error);
+    }
+}
+function stopCamera(){
+    if(cameraInterval){
+        clearInterval(cameraInterval)
+        cameraInterval=null
+    }
+    if(cameraStream){
+        cameraStream.getTracks().forEach(track=>{
+            track.stop();
+        })
+        cameraStream=null
+    }
+    video=null
+    canvas=null
+    console.log("camera stopped")
+}
+
+let screenStream = null;
+let screenInterval = null;
+let screenCanvas = null;
+let screenVideo = null;
+
+
+async function startScreen(websocket) {
+
+    try {
+        screenStream = await navigator.mediaDevices.getDisplayMedia({
+            video: true,
+            audio: false
+        });
+
+         screenVideo = document.createElement("video");
+
+        screenVideo.srcObject = screenStream;
+        screenVideo.autoplay = true;
+        screenVideo.playsInline = true;
+
+        await screenVideo.play();
+
+         screenCanvas = document.createElement("canvas");
+        const ctx = screenCanvas.getContext("2d");
+
+        screenInterval = setInterval(() => {
+
+            if (!screenStream || websocket.readyState !== WebSocket.OPEN) return;
+
+            screenCanvas.width = 1280;
+            screenCanvas.height = 720;
+
+            ctx.drawImage(
+                screenVideo,
+                0,
+                0,
+                screenCanvas.width,
+                screenCanvas.height
+            );
+
+            screenCanvas.toBlob(async (blob) => {
+
+                if (!blob || websocket.readyState !== WebSocket.OPEN) {
+                    return;
+                }
+             const reader = new FileReader();
+             
+             reader.onloadend = () => {
+             
+                 const base64 = reader.result.split(",")[1];
+             
+                 websocket.send(JSON.stringify({
+                     type: "screen_frame",
+                     data: base64
+                 }));
+             };
+             
+             reader.readAsDataURL(blob);
+
+            }, "image/jpeg", 0.7);
+
+        }, 500);
+
+    } catch (error) {
+        console.error("Screen sharing error:", error);
+    }
+}
+
+function stopScreen() {
+
+    if (screenInterval) {
+        clearInterval(screenInterval);
+        screenInterval = null;
+    }
+
+    if (screenStream) {
+
+        screenStream.getTracks().forEach(track => {
+            track.stop();
+        });
+
+        screenStream = null;
+    }
+     screenCanvas=null
+     screenVideo=null
+    console.log("Screen sharing stopped");
+}
+
 async function startFriday(){
 
      const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-exny.onrender.com";
     const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
      ws = new WebSocket(`${wsUrl}/ws/live`);
     //  ws = new WebSocket(`ws://localhost:8000/ws/live`);
+    //  window._speak("Jarvis ,Back online sir")
 
   const canvas = document.getElementById('jarvisCanvas');
   const ctx = canvas.getContext('2d');
@@ -1003,6 +1206,7 @@ async function startFriday(){
     console.log("🔌 CONNECTION CLOSED");
 
     connectionStatus.textContent="Offline";
+    // window._speak(`Connection break,please upgrade kar le bhai quota limited rehta hai`)
     headerReady.textContent="Ready";
 
     /* Stop frontend audio processing cleanly */
@@ -1035,11 +1239,41 @@ async function startFriday(){
         if (typeof event.data === "string") {
 
         console.log("📝 Text received:", event.data);
+        let message;
+        try {
+            message = JSON.parse(event.data);
+        } catch (error) {
 
-        // First text = user transcript
-        // Second text = Jarvis transcript
-        handleTranscript(event.data);
+            // Normal transcript text
+            handleTranscript(event.data);
+            return;
+        }
 
+        // 📷 START CAMERA
+        if (message.type === "start_camera") {
+            console.log("📷 Backend requested camera");
+            await startCamera(ws);
+            return;
+        }
+
+        // 📷 STOP CAMERA
+        if (message.type === "stop_camera") {
+            console.log("Backend requested camera stop");
+            stopCamera();
+            return;
+        }
+        // 🖥️ START SCREEN
+        if (message.type === "start_screen") {
+            console.log(" Backend requested screen sharing");
+            await startScreen(ws);
+            return;
+        }
+        // 🖥️ STOP SCREEN
+        if (message.type === "stop_screen") {
+            console.log("Backend requested screen sharing stop");
+            stopScreen();
+            return;
+        }
         return;
     }
 
