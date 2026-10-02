@@ -1,15 +1,14 @@
 import os
-from pathlib import Path
+import json
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-BASE_DIR=Path(__file__).resolve().parent
 
-CRENDENTIAL_FILE=BASE_DIR/"credentials.json"
-TOKEN_FILE = BASE_DIR / "token.json"
+CRENDENTIAL_FILE=json.loads(os.environ["CREDENTIALS"])
+TOKEN_FILE=json.loads(os.environ["TOKEN"])
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
