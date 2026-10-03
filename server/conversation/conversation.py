@@ -155,16 +155,17 @@ class ConversationManager:
             self.switch_event.clear()
             print("Switching To:",self.active_session_id)
 
-       async def start_camera(self,websocket,session):
+       async def start_camera(self,websocket,session,facing):
+          await websocket.send_json({
+               "type":"start_camera",
+               "facing":facing
+          })
           if self.camera_sender_task and not self.camera_sender_task.done():
                return{
                     "success":True,
                     "message":"Camera already active"
                }
           self.camera_active=True
-          await websocket.send_json({
-               "type":"start_camera"
-          })
           self.camera_sender_task=asyncio.create_task(
                send_camera_frames(self,session)
           )

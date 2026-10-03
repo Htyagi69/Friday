@@ -932,14 +932,33 @@ let video=null
 let canvas=null
 let cameraInterval=null
 
-async function startCamera(websocket) {
-    console.log("📷 startCamera() called");
+async function startCamera(websocket,facing="front") {
+    console.log(`Starting camera facing=${facing}`);
 
     try {
-        console.log("📷 Requesting camera permission...");
+        console.log(" Requesting camera permission...");
+        if(cameraStream){
+          cameraStream.getTracks().forEach(track=>{
+            console.log("Stopping old camera:", track.label);
+                 track.stop()
+          })
+          cameraStream=null
+        }
 
+        if (cameraInterval) {
+            clearInterval(cameraInterval);
+            cameraInterval = null;
+        }
+        let facingMode="user";
+        if(facing=="back"){
+          facingMode="environment"
+        }
         cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
+            video: {
+              facingMode:{
+                ideal:facingMode
+              }
+            },
             audio: false
         });
 
@@ -959,7 +978,7 @@ async function startCamera(websocket) {
 
         await video.play();
 
-        console.log("✅ VIDEO PLAYING");
+        console.log(" VIDEO PLAYING");
 
         canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
@@ -1251,8 +1270,8 @@ async function startFriday(){
 
         // 📷 START CAMERA
         if (message.type === "start_camera") {
-            console.log("📷 Backend requested camera");
-            await startCamera(ws);
+            console.log(" Backend requested camera",message.facing);
+            await startCamera(ws,message.facing || "front");
             return;
         }
 

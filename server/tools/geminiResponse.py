@@ -43,7 +43,11 @@ get_camera_access_tool = types.FunctionDeclaration(
     description="a function that opens up the camera of the device provide the screenshots of outside world",
     parameters=types.Schema(
         type=types.Type.OBJECT,
-        properties={},
+        properties={
+             "facing": types.Schema(
+                       type=types.Type.STRING,
+                       description="this field is decide the facingMode of camera either back or front"
+                    )},
     )
 )
 stop_camera_access_tool = types.FunctionDeclaration(
@@ -51,7 +55,7 @@ stop_camera_access_tool = types.FunctionDeclaration(
     description="a function that closes the camera of the device",
     parameters=types.Schema(
         type=types.Type.OBJECT,
-        properties={},
+        properties={}
     )
 )
 get_screen_access_tool = types.FunctionDeclaration(
@@ -237,7 +241,9 @@ async def sendget_gemini_response(manager,session,websocket:WebSocket,tempMessag
                elif function_call.name == "start_camera":
                 
                     print(" TOOL START")
-                    result =await manager.start_camera(websocket,session)
+                    facing=function_call.args.get("facing","front")
+                    print(f"Requested camera: {facing}")
+                    result =await manager.start_camera(websocket,session,facing)
                 
                     print("camera_task initiated")
                     print(result)
