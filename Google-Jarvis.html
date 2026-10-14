@@ -1150,7 +1150,7 @@ function stopScreen() {
 
 async function startFriday(){
 
-     const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-exny.onrender.com";
+     const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-y7nz.onrender.com";
     const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
      ws = new WebSocket(`${wsUrl}/ws/live`);
     //  ws = new WebSocket(`ws://localhost:8000/ws/live`);
