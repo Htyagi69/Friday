@@ -1404,7 +1404,19 @@ let screenVideo = null;
 
 
 async function startScreen(websocket) {
+        if (!navigator.mediaDevices?.getDisplayMedia) {
+        console.warn(
+            "Screen capture is unavailable in this browser."
+        );
 
+        // Replace this with your existing Friday HUD/status UI if available.
+        alert(
+            "Bhai, browser screen sharing isn't supported here. " +
+            "Use Friday on your laptop or a native Android version."
+        );
+
+        return;
+    }
     try {
         const videoElement=document.getElementById("send_stream")
         console.log("Secure context:", window.isSecureContext);
