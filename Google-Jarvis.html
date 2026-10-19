@@ -1407,6 +1407,11 @@ async function startScreen(websocket) {
 
     try {
         const videoElement=document.getElementById("send_stream")
+        console.log("Secure context:", window.isSecureContext);
+console.log(
+    "getDisplayMedia:",
+    typeof navigator.mediaDevices?.getDisplayMedia
+);
         screenStream = await navigator.mediaDevices.getDisplayMedia({
             video: true,
             audio: false
