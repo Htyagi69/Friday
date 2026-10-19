@@ -63,8 +63,8 @@ if(permission==="granted"){
       });
     //    console.log("FCM TOKEN:", token);
        if(token){
-        await fetch("http://127.0.0.1:8000/register-device",{
-        // await fetch("https://friday-exny.onrender.com/register-device",{
+        // await fetch("http://127.0.0.1:8000/register-device",{
+        await fetch("https://friday-y7nz.onrender.com/register-device",{
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
@@ -110,8 +110,8 @@ onMessage(messaging, (payload) => {
 });
 
 async function testNotification(){
-    const response=await fetch("http://127.0.0.1:8000/test-notify",{
-    // const response=await fetch("https://friday-exny.onrender.com/test-notify",{
+    // const response=await fetch("http://127.0.0.1:8000/test-notify",{
+    const response=await fetch("https://friday-y7nz.onrender.com/test-notify",{
         method:"POST",
         headers:{
             "Content-Type":"application/json"
