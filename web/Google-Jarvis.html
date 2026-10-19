@@ -2072,7 +2072,7 @@ async function startFriday(){
       if(!ws || ws.readyState!==WebSocket.OPEN){
 
         /* Recreate socket if backend closed it */
-        ws=new WebSocket(`ws://localhost:8000/ws/live`);
+        ws = new WebSocket(`${wsUrl}/ws/live`);
 
         ws.onopen=()=>{
           connectionStatus.textContent="Connected";
