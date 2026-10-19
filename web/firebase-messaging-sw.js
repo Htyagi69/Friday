@@ -37,8 +37,8 @@ const CACHE_NAME = "friday-v1";
 
 const FILES_TO_CACHE = [
     "/",
-    "/Google-Jarvis.html",
-    "/manifest.json",
+    "/web/Google-Jarvis.html",
+    "/web/manifest.json",
     "/assets/Friday.png"
 ];
 

@@ -1,8 +1,17 @@
+
 {
   "rewrites": [
     {
       "source": "/",
-      "destination": "/Google-Jarvis.html"
+      "destination": "/web/Google-Jarvis.html"
+    },
+    {
+      "source": "/firebase-messaging-sw.js",
+      "destination": "/web/firebase-messaging-sw.js"
+    },
+    {
+      "source": "/manifest.json",
+      "destination": "/web/manifest.json"
     }
   ]
 }
