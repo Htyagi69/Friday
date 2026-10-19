@@ -12,6 +12,10 @@
     {
       "source": "/manifest.json",
       "destination": "/web/manifest.json"
+    },
+    {
+      "source": "/script.js",
+      "destination": "/web/script.js"
     }
   ]
 }
