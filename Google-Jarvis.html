@@ -347,6 +347,287 @@ body{
   background:rgba(0,8,18,.22);
 }
 
+.transcript-box .line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* Speaker label */
+.transcript-box .speaker {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: #58ddf9;
+}
+
+/* Jarvis response */
+.line.jarvis {
+  color: #d6e8f5;
+}
+
+.panel.transcript {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   FRIDAY — RESPONSIVE LIVE TRANSCRIPT
+   ========================================= */
+
+.panel.transcript {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.live-transcript-panel {
+    width: 100%;
+    height: 180px !important;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.live-transcript-panel .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    font-size: 15px;
+    color: #edf5fa;
+    font-weight: 500;
+}
+
+.live-transcript-panel .transcript-box {
+    flex: 1;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+
+    margin-top: 12px;
+    padding: 12px;
+
+    border: 1px solid rgba(0, 143, 224, 0.25);
+    border-radius: 12px;
+    background: rgba(0, 8, 18, 0.22);
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(88, 221, 249, 0.4) transparent;
+}
+
+.live-transcript-panel .transcript-box::-webkit-scrollbar {
+    width: 5px;
+}
+
+.live-transcript-panel .transcript-box::-webkit-scrollbar-thumb {
+    background: rgba(88, 221, 249, 0.4);
+    border-radius: 10px;
+}
+
+.live-transcript-panel .line {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    width: 100%;
+    min-width: 0;
+    flex-shrink: 0;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+.live-transcript-panel .speaker {
+    flex-shrink: 0;
+    font-weight: 600;
+    color: #58ddf9;
+}
+
+.live-transcript-panel #userTranscript,
+.live-transcript-panel #jarvisTranscript {
+    flex: 1;
+    min-width: 0;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.live-transcript-panel .line.jarvis {
+    color: #d6e8f5;
+}
+
+
+/* =========================================
+   FRIDAY — RESPONSIVE VIDEO / STREAM PANEL
+   ========================================= */
+
+/* Hidden until a live video stream exists */
+.stream-panel[hidden] {
+    display: none !important;
+}
+
+.stream-panel {
+    width: 100%;
+    height: auto !important;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.stream-panel .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+
+    font-size: 15px;
+    color: #edf5fa;
+    font-weight: 500;
+}
+
+.stream-panel .transcript-box {
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+
+    margin-top: 12px;
+    padding: 10px;
+
+    border: 1px solid rgba(0, 143, 224, 0.25);
+    border-radius: 12px;
+    background: rgba(0, 8, 18, 0.22);
+
+    overflow: hidden;
+}
+
+.stream-panel .stream-video-wrapper {
+    position: relative;
+
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 320px;
+
+    overflow: hidden;
+    border-radius: 12px;
+    background: #050a12;
+}
+
+.stream-panel #send_stream {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+
+    object-fit: contain;
+    border-radius: inherit;
+    background: #050a12;
+}
+
+
+/* =========================================
+   LAPTOP / DESKTOP
+   ========================================= */
+
+@media (min-width: 881px) {
+    .live-transcript-panel {
+        height: 180px !important;
+    }
+
+    .stream-panel .stream-video-wrapper {
+        max-height: 320px;
+    }
+}
+
+
+/* =========================================
+   TABLETS / SMALL LAPTOPS
+   ========================================= */
+
+@media (min-width: 481px) and (max-width: 880px) {
+    .live-transcript-panel {
+        height: 160px !important;
+    }
+
+    .live-transcript-panel .transcript-box {
+        padding: 10px;
+    }
+
+    .stream-panel .stream-video-wrapper {
+        max-height: 260px;
+    }
+}
+
+
+/* =========================================
+   MOBILE PHONES
+   ========================================= */
+
+@media (max-width: 480px) {
+    .live-transcript-panel {
+        height: 160px !important;
+        padding: 12px;
+    }
+
+    .live-transcript-panel .panel-title,
+    .stream-panel .panel-title {
+        font-size: 14px;
+    }
+
+    .live-transcript-panel .transcript-box {
+        margin-top: 10px;
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .live-transcript-panel .line {
+        gap: 6px;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .stream-panel .transcript-box {
+        margin-top: 10px;
+        padding: 8px;
+    }
+
+    .stream-panel .stream-video-wrapper {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        max-height: 240px;
+    }
+}
+
+
 .line{
   font-size:12px;
   color:#00cfff;
@@ -825,17 +1106,57 @@ body{
   <!-- RIGHT INFORMATION PANELS -->
   <aside class="right-column">
 
-    <section class="panel transcript">
-      <div class="panel-title">
-        <span class="dot"></span>
-        <span>Live Transcript</span>
-      </div>
 
-      <div class="transcript-box">
-        <div class="line"><span>You:</span> <span id="userTranscript">Say something...</span></div>
-        <div class="line jarvis"><span>Jarvis:</span> <span id="jarvisTranscript">I'm listening.</span></div>
-      </div>
-    </section>
+<section class="panel transcript live-transcript-panel">
+  <div class="panel-title">
+    <span class="dot"></span>
+    <span>Live Transcript</span>
+  </div>
+
+  <div class="transcript-box">
+    <div class="line">
+      <span class="speaker">You:</span>
+      <span id="userTranscript">Say something...</span>
+    </div>
+
+    <div class="line jarvis">
+      <span class="speaker">Jarvis:</span>
+      <span id="jarvisTranscript">I'm listening.</span>
+    </div>
+  </div>
+</section>
+
+
+<section class="panel transcript stream-panel" hidden>
+  <div class="panel-title">
+    <span class="dot"></span>
+    <span>Stream</span>
+  </div>
+
+  <div class="transcript-box">
+    <div class="stream-video-wrapper">
+      <video
+        id="send_stream"
+        autoplay
+        muted
+        playsinline
+      ></video>
+    </div>
+  </div>
+</section>
+
+<section class="panel status-panel">
+  <div class="panel-title">
+    <span class="dot"></span>
+    <span>Status</span>
+  </div>
+
+  <div class="status-row">
+    <span>Microphone</span><span class="status-value" id="micStatus">Ready</span>
+    <span>Connection</span><span class="status-value cyan" id="connectionStatus">Offline</span>
+    <span>Assistant</span><span class="status-value cyan" id="assistantStatus">Ready</span>
+  </div>
+</section>
 
     <section class="panel thinking">
       <div class="panel-title">
@@ -851,18 +1172,6 @@ body{
       </div>
     </section>
 
-    <section class="panel status-panel">
-      <div class="panel-title">
-        <span class="dot"></span>
-        <span>Status</span>
-      </div>
-
-      <div class="status-row">
-        <span>Microphone</span><span class="status-value" id="micStatus">Ready</span>
-        <span>Connection</span><span class="status-value cyan" id="connectionStatus">Offline</span>
-        <span>Assistant</span><span class="status-value cyan" id="assistantStatus">Ready</span>
-      </div>
-    </section>
 
   </aside>
 
@@ -932,6 +1241,21 @@ let video=null
 let canvas=null
 let cameraInterval=null
 
+function updateStreamPanel(stream = cameraStream) {
+    const videoElement = document.getElementById("send_stream");
+    const streamPanel = videoElement?.closest(".stream-panel");
+
+    if (!streamPanel) return;
+
+    const hasLiveVideo =
+        stream instanceof MediaStream &&
+        stream.getVideoTracks().some(
+            track => track.readyState === "live"
+        );
+
+    streamPanel.hidden = !hasLiveVideo;
+}
+
 async function startCamera(websocket,facing="front") {
     console.log(`Starting camera facing=${facing}`);
 
@@ -953,6 +1277,7 @@ async function startCamera(websocket,facing="front") {
         if(facing=="back"){
           facingMode="environment"
         }
+        const videoElement=document.getElementById("send_stream")
         cameraStream = await navigator.mediaDevices.getUserMedia({
             video: {
               facingMode:{
@@ -961,7 +1286,10 @@ async function startCamera(websocket,facing="front") {
             },
             audio: false
         });
-
+        if(cameraStream){
+          videoElement.srcObject=cameraStream;
+           updateStreamPanel(cameraStream);
+        }
         console.log(" CAMERA STREAM CREATED");
         console.log(" Tracks:", cameraStream.getVideoTracks());
 
@@ -977,6 +1305,7 @@ async function startCamera(websocket,facing="front") {
         video.playsInline = true;
 
         await video.play();
+        updateStreamPanel(cameraStream);
 
         console.log(" VIDEO PLAYING");
 
@@ -1058,6 +1387,14 @@ function stopCamera(){
     video=null
     canvas=null
     console.log("camera stopped")
+    
+    const streamVideoElement = document.getElementById("send_stream");
+
+if (streamVideoElement) {
+    streamVideoElement.srcObject = null;
+}
+
+updateStreamPanel(null);
 }
 
 let screenStream = null;
@@ -1069,11 +1406,16 @@ let screenVideo = null;
 async function startScreen(websocket) {
 
     try {
+        const videoElement=document.getElementById("send_stream")
         screenStream = await navigator.mediaDevices.getDisplayMedia({
             video: true,
             audio: false
         });
 
+        if(screenStream){
+          videoElement.srcObject=screenStream
+          updateStreamPanel(screenStream)
+        }
          screenVideo = document.createElement("video");
 
         screenVideo.srcObject = screenStream;
@@ -1081,6 +1423,7 @@ async function startScreen(websocket) {
         screenVideo.playsInline = true;
 
         await screenVideo.play();
+        updateStreamPanel(screenStream)
 
          screenCanvas = document.createElement("canvas");
         const ctx = screenCanvas.getContext("2d");
@@ -1146,11 +1489,16 @@ function stopScreen() {
      screenCanvas=null
      screenVideo=null
     console.log("Screen sharing stopped");
+     const streamVideoElement = document.getElementById("send_stream");
+     if (streamVideoElement) {
+    streamVideoElement.srcObject = null;}
+
+updateStreamPanel(null);
 }
 
 async function startFriday(){
 
-     const API_URL=window.location.hostname==="localhost"? "http://localhost:8000": "https://friday-y7nz.onrender.com";
+     const API_URL=window.location.hostname==="127.0.0.1"? "http://localhost:8000": "https://friday-y7nz.onrender.com";
     const wsUrl=API_URL.replace(/^http:/,"ws:").replace(/^https:/,"wss:")
      ws = new WebSocket(`${wsUrl}/ws/live`);
     //  ws = new WebSocket(`ws://localhost:8000/ws/live`);
@@ -1268,26 +1616,22 @@ async function startFriday(){
             return;
         }
 
-        // 📷 START CAMERA
         if (message.type === "start_camera") {
             console.log(" Backend requested camera",message.facing);
             await startCamera(ws,message.facing || "front");
             return;
         }
 
-        // 📷 STOP CAMERA
         if (message.type === "stop_camera") {
             console.log("Backend requested camera stop");
             stopCamera();
             return;
         }
-        // 🖥️ START SCREEN
         if (message.type === "start_screen") {
             console.log(" Backend requested screen sharing");
             await startScreen(ws);
             return;
         }
-        // 🖥️ STOP SCREEN
         if (message.type === "stop_screen") {
             console.log("Backend requested screen sharing stop");
             stopScreen();
